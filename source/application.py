@@ -3,7 +3,7 @@ Sticks all code together
 """
 
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 
 class Application:
@@ -12,14 +12,33 @@ class Application:
     """
 
     def __init__(self):
-        pass
+        self.args: Namespace | None = None
 
-    def _parse_args(self) -> None:
+    def parse_args(self) -> None:
         """
         Parse command line arguments
         """
+
+        parser = ArgumentParser(
+            prog="QM Compiler",
+            description="Quantum Mini Compiler CLI")
+
+        parser.add_argument("-i", "--input",
+                            help="input file",
+                            required=True)
+        parser.add_argument("-o", "--output",
+                            help="compiled bytecode output",
+                            required=True)
+        parser.add_argument("-v", "--verbose",
+                            help="verbose output",
+                            action="store_true",
+                            default=False)
+
+        self.args = parser.parse_args()
 
     def run(self) -> None:
         """
         Runs the application
         """
+
+        self.parse_args()
