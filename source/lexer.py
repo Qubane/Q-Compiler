@@ -56,24 +56,34 @@ class Lexer:
         buffer = ""
         word = Word()
 
+        is_commented = False
+
         iterator = CharacterIterator(self.raw_code)
         while not iterator.is_done():
             char = iterator.next()
 
-            if char == " ":
+            if char == "\n":
+                is_commented = False
+            if is_commented:
+                continue
+
+            if char == " ":  # tag separator
                 if buffer:
                     word.tags.append(Tag(buffer))
                     buffer = ""
-            elif char == "\n" or char == "\t":
-                if char == "\t":
+            elif char == "\n" or char == "\t" or char == ";":  # special characters
+                if char == ";":  # comments
+                    is_commented = True
+                if char == "\t":  # level up
                     word.tags.append(Tag(">", TagType.INTERNAL))
-                if buffer:
-                    word.tags.append(Tag(buffer))
+                if buffer:  # append last tag from buffer
+                    word.add(Tag(buffer))
+                if len(word.tags) > 1:  # make and append the word
                     word.line = line_count
                     self.global_scope.add(word)
                     word = Word()
                     buffer = ""
-                if char == "\n":
+                if char == "\n":  # increment line counter
                     line_count += 1
-            else:
+            else:  # any other character
                 buffer += char

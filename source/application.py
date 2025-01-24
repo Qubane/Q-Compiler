@@ -50,4 +50,4 @@ class Application:
         lexer.evaluate()
 
         for word in lexer.global_scope:
-            print(word, word.line)
+            print(word)
