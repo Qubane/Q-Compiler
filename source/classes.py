@@ -43,3 +43,21 @@ class Scope:
 
     def __init__(self, words: list[Word]):
         self.words: list[Word] = words
+
+
+class MacroScope(Scope):
+    """
+    Special type of scope used for macros
+    """
+
+
+class SubroutineScope(Scope):
+    """
+    Special type of scope used for subroutines
+    """
+
+
+class GlobalScope(Scope):
+    """
+    Global scope
+    """
