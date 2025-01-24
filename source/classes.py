@@ -37,6 +37,9 @@ class Word:
     def __init__(self, tags: list[Tag] | None = None):
         self.tags: list[Tag] = tags if tags is not None else list()
 
+    def __iter__(self):
+        return self.tags.__iter__()
+
 
 class Scope:
     """
@@ -45,6 +48,9 @@ class Scope:
 
     def __init__(self, words: list | None = None):
         self.words: list[Word | Scope] = words if words is not None else list()
+
+    def __iter__(self):
+        return self.words.__iter__()
 
     def add(self, word: Word | Any):
         """
