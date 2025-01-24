@@ -11,6 +11,7 @@ from source.exceptions import *
 
 class TagType(StrEnum):
     UNDEFINED = "undefined"
+    INTERNAL = "internal"
     BUILT_IN = "built-in"
     POINTER = "pointer"
     NUMBER = "number"
