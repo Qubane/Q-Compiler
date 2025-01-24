@@ -3,9 +3,10 @@ Compiler classes
 """
 
 
-from dataclasses import dataclass
-from enum import StrEnum
 from typing import Any
+from enum import StrEnum
+from dataclasses import dataclass
+from source.exceptions import *
 
 
 class TagType(StrEnum):
@@ -44,6 +45,16 @@ class Scope:
 
     def __init__(self, words: list | None = None):
         self.words: list[Word | Scope] = words if words is not None else list()
+
+    def add(self, word: Word | Any):
+        """
+        Adds a word / scope to scope
+        """
+
+        if isinstance(word, (Word, Scope)):
+            self.words.append(word)
+        else:
+            raise CompilerError("Attempted to append wrong type to scope")
 
 
 class MacroScope(Scope):
