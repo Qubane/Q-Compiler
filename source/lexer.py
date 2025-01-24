@@ -44,9 +44,31 @@ class Lexer:
         :param code: code string
         """
 
-        self.raw_code = code
+        self.raw_code = code.replace(f"\n{' ' * 4}", "\n\t")
 
     def evaluate(self):
         """
         Evaluates imported code
         """
+
+        buffer = ""
+        word = Word()
+
+        iterator = CharacterIterator(self.raw_code)
+        while not iterator.is_done():
+            char = iterator.next()
+
+            if char == " ":
+                if buffer:
+                    word.tags.append(Tag(buffer))
+                    buffer = ""
+            elif char == "\n" or char == "\t":
+                if char == "\t":
+                    word.tags.append(Tag(">", TagType.INTERNAL))
+                if buffer:
+                    word.tags.append(Tag(buffer))
+                    self.global_scope.add(word)
+                    word = Word()
+                    buffer = ""
+            else:
+                buffer += char

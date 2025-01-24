@@ -4,6 +4,7 @@ Sticks all code together
 
 
 from argparse import ArgumentParser, Namespace
+from source.lexer import Lexer
 
 
 class Application:
@@ -41,3 +42,12 @@ class Application:
         """
 
         self.parse_args()
+
+        # temp code for testing
+        lexer = Lexer()
+        with open(self.args.input, "r", encoding="ascii") as file:
+            lexer.import_code(file.read())
+        lexer.evaluate()
+
+        for word in lexer.global_scope:
+            print(word)
