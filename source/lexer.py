@@ -51,6 +51,8 @@ class Lexer:
         Evaluates imported code
         """
 
+        line_count = 1
+
         buffer = ""
         word = Word()
 
@@ -67,8 +69,12 @@ class Lexer:
                     word.tags.append(Tag(">", TagType.INTERNAL))
                 if buffer:
                     word.tags.append(Tag(buffer))
+                    word.line = line_count
+
                     self.global_scope.add(word)
                     word = Word()
                     buffer = ""
+                if char == "\n":
+                    line_count += 1
             else:
                 buffer += char

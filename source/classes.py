@@ -37,6 +37,7 @@ class Word:
 
     def __init__(self, tags: list[Tag] | None = None):
         self.tags: list[Tag] = tags if tags is not None else list()
+        self.line: int = -1
 
     def __iter__(self):
         return self.tags.__iter__()
