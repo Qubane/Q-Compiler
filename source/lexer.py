@@ -35,4 +35,13 @@ class Lexer:
     """
 
     def __init__(self):
+        self.raw_code: str = ""
         self.global_scope: GlobalScope = GlobalScope(list())
+
+    def import_code(self, code: str) -> None:
+        """
+        Imports code into Lexer
+        :param code: code string
+        """
+
+        self.raw_code = code
