@@ -9,6 +9,7 @@ from typing import Any
 
 
 class TagType(StrEnum):
+    UNDEFINED = "undefined"
     BUILT_IN = "built-in"
     POINTER = "pointer"
     NUMBER = "number"
@@ -23,8 +24,8 @@ class Tag:
     TagType - value pair
     """
 
-    type: TagType
     value: Any | None = None
+    type: TagType = TagType.UNDEFINED
 
 
 class Word:
