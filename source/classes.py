@@ -45,6 +45,16 @@ class Word:
     def __repr__(self):
         return " ".join(f"[{tag.value}]" for tag in self.tags)
 
+    def add(self, tag: Tag):
+        """
+        Adds a tag to word
+        """
+
+        if isinstance(tag, Tag):
+            self.tags.append(tag)
+        else:
+            raise CompilerError("Attempted to append wrong type to word")
+
 
 class Scope:
     """
