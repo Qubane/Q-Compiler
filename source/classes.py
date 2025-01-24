@@ -32,8 +32,8 @@ class Word:
     Instruction word
     """
 
-    def __init__(self, tags: list[Tag]):
-        self.tags: list[Tag] = tags
+    def __init__(self, tags: list[Tag] | None = None):
+        self.tags: list[Tag] = tags if tags is not None else list()
 
 
 class Scope:
@@ -41,8 +41,8 @@ class Scope:
     Scope of instruction words
     """
 
-    def __init__(self, words: list):
-        self.words: list[Word | Scope] = words
+    def __init__(self, words: list | None = None):
+        self.words: list[Word | Scope] = words if words is not None else list()
 
 
 class MacroScope(Scope):
