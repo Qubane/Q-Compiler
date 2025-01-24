@@ -34,3 +34,12 @@ class Word:
 
     def __init__(self, tags: list[Tag]):
         self.tags: list[Tag] = tags
+
+
+class Scope:
+    """
+    Scope of instruction words
+    """
+
+    def __init__(self, words: list[Word]):
+        self.words: list[Word] = words
