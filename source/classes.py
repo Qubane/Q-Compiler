@@ -40,6 +40,9 @@ class Word:
     def __iter__(self):
         return self.tags.__iter__()
 
+    def __repr__(self):
+        return " ".join(f"[{tag.value}]" for tag in self.tags)
+
 
 class Scope:
     """
