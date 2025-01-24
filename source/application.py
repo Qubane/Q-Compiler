@@ -3,6 +3,9 @@ Sticks all code together
 """
 
 
+from argparse import ArgumentParser
+
+
 class Application:
     """
     Main application class
@@ -11,7 +14,12 @@ class Application:
     def __init__(self):
         pass
 
-    def run(self):
+    def _parse_args(self) -> None:
+        """
+        Parse command line arguments
+        """
+
+    def run(self) -> None:
         """
         Runs the application
         """
