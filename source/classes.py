@@ -41,8 +41,8 @@ class Scope:
     Scope of instruction words
     """
 
-    def __init__(self, words: list[Word]):
-        self.words: list[Word] = words
+    def __init__(self, words: list):
+        self.words: list[Word | Scope] = words
 
 
 class MacroScope(Scope):
