@@ -70,7 +70,6 @@ class Lexer:
                 if buffer:
                     word.tags.append(Tag(buffer))
                     word.line = line_count
-
                     self.global_scope.add(word)
                     word = Word()
                     buffer = ""
