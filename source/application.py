@@ -27,8 +27,7 @@ class Application:
                             help="input file",
                             required=True)
         parser.add_argument("-o", "--output",
-                            help="compiled bytecode output",
-                            required=True)
+                            help="compiled bytecode output")
         parser.add_argument("-v", "--verbose",
                             help="verbose output",
                             action="store_true",
