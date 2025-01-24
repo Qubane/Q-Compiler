@@ -45,3 +45,8 @@ class Lexer:
         """
 
         self.raw_code = code
+
+    def evaluate(self):
+        """
+        Evaluates imported code
+        """
