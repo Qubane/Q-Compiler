@@ -3,6 +3,11 @@ load 10
 add 59
 store A
 
+; test of number types
+load 0b10011001     ; number in binary form
+load 0xfe           ; number in hexadecimal form
+load 11             ; number in decimal form
+
 ; test of macro
 macro test_macro uses x1 x2 x3
     load x1     ; loads x1 into acc
