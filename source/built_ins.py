@@ -18,7 +18,7 @@ class CodeNamespace(DefineNamespace):
     """
 
 
-class General:
+class General(DefineNamespace):
     """
     General built-ins, independent of CPU chosen to compile for
     """
@@ -30,7 +30,7 @@ class General:
     }
 
 
-class QMr11:
+class QMr11(CodeNamespace):
     """
     Quantum Mini rev. 1.1 built-ins
     """
@@ -88,7 +88,7 @@ class QMr11:
     }
 
 
-class QT:
+class QT(CodeNamespace):
     """
     Quantum Tera (cutie :3) built-ins
     """
