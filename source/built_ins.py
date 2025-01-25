@@ -18,6 +18,9 @@ class DefineNamespace:
             return item in self.definitions
         return False
 
+    def __getitem__(self, item):
+        return self.definitions.__getitem__(item)
+
 
 class CodeNamespace(DefineNamespace):
     """
