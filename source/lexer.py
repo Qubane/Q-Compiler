@@ -4,12 +4,15 @@ Lexer code
 
 
 from source.classes import *
+from source.built_ins import *
 
 
 class Lexer:
     """
     Lexer class
     """
+
+    code_namespace: CodeNamespace = NamespaceQT()
 
     def __init__(self):
         self.raw_code: str = ""
@@ -77,7 +80,15 @@ class Lexer:
 
         for word in self.global_scope:
             for tag in word:
-                pass
+                tag: Tag  # help type hinting
+                if tag.value in GeneralNamespace:
+                    tag.type = GeneralNamespace[tag.value]
+                elif tag.value in self.code_namespace:
+                    tag.type = self.code_namespace[tag.value]
+                elif tag.value.isnumeric():  # simple decimal numbers
+                    tag.type = TagType.NUMBER
+                elif tag.value[:2] in NamespaceGeneral.number_prefixes:  # non decimal numbers
+                    tag.type = TagType.NUMBER
 
     def evaluate(self):
         """
@@ -85,3 +96,4 @@ class Lexer:
         """
 
         self._eval_first_stage()
+        self._eval_second_stage()

@@ -42,6 +42,9 @@ class NamespaceGeneral(DefineNamespace):
     number_prefixes: set[str] = {"0b", "0x"}
 
 
+GeneralNamespace = NamespaceGeneral()
+
+
 class NamespaceQMr11(CodeNamespace):
     """
     Quantum Mini rev. 1.1 built-ins

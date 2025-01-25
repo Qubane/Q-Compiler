@@ -50,4 +50,4 @@ class Application:
         lexer.evaluate()
 
         for word in lexer.global_scope:
-            print(word)
+            print(" ".join(f"[{tag.value: >12} {tag.type: <9}]" for tag in word))
