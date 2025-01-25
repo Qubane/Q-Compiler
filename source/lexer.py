@@ -67,6 +67,18 @@ class Lexer:
             else:  # any other character
                 buffer += char
 
+    def _eval_second_stage(self):
+        """
+        Second internal evaluation stage.
+
+        In this stage everything is analyzed tag-by-tag.
+        Every tag is simply being assigned a type
+        """
+
+        for word in self.global_scope:
+            for tag in word:
+                pass
+
     def evaluate(self):
         """
         Evaluates imported code
