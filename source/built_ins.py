@@ -6,6 +6,12 @@ Build-in variables for Lexer type defining
 from source.classes import *
 
 
+class DefineNamespace:
+    """
+    Base class for definition namespaces
+    """
+
+
 class General:
     """
     General built-ins, independent of CPU chosen to compile for
