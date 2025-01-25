@@ -11,6 +11,13 @@ class DefineNamespace:
     Base class for definition namespaces
     """
 
+    definitions: dict[str, TagType] = dict()
+
+    def __contains__(self, item):
+        if isinstance(item, str):
+            return item in self.definitions
+        return False
+
 
 class CodeNamespace(DefineNamespace):
     """
