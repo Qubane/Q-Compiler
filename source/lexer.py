@@ -46,9 +46,14 @@ class Lexer:
 
         self.raw_code = code.replace(f"\n{' ' * 4}", "\n\t")
 
-    def evaluate(self):
+    def _eval_first_stage(self):
         """
-        Evaluates imported code
+        First internal evaluation stage.
+
+        In this stage code is analyzed letter-by-letter.
+        Each complete code-word is compiled into Tag class.
+        After newline, all tags on the line make a complete Word class.
+        All words are appended to global scope, no additional scopes are generated.
         """
 
         line_count = 1
@@ -87,3 +92,10 @@ class Lexer:
                     line_count += 1
             else:  # any other character
                 buffer += char
+
+    def evaluate(self):
+        """
+        Evaluates imported code
+        """
+
+        self._eval_first_stage()
