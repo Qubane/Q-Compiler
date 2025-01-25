@@ -76,7 +76,7 @@ class QMr11:
     }
 
 
-class QMr2:
+class QT:
     """
-    Quantum Mini rev. 2 built-ins
+    Quantum Tera (cutie :3) built-ins
     """
