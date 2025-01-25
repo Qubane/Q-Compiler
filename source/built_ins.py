@@ -12,6 +12,12 @@ class DefineNamespace:
     """
 
 
+class CodeNamespace(DefineNamespace):
+    """
+    Namespace for code definitions
+    """
+
+
 class General:
     """
     General built-ins, independent of CPU chosen to compile for
