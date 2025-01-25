@@ -39,6 +39,8 @@ class NamespaceGeneral(DefineNamespace):
         "uses": TagType.BUILT_IN,
     }
 
+    number_prefixes: set[str] = {"0b", "0x"}
+
 
 class NamespaceQMr11(CodeNamespace):
     """
