@@ -49,9 +49,15 @@ class Parser:
                         f"built-in '{word[idx].value}' followed by a non-pointer argument(s)",
                         line=word.line)
 
+    def _parse_second_stage(self):
+        """
+        Second stage of parsing
+        """
+
     def parse(self):
         """
         Parses imported scope
         """
 
         self._parse_first_stage()
+        self._parse_second_stage()
