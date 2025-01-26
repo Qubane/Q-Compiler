@@ -73,6 +73,9 @@ class Scope:
     def __iter__(self):
         return self.words.__iter__()
 
+    def __getitem__(self, item):
+        return self.words.__getitem__(item)
+
     def __len__(self):
         return len(self.words)
 
