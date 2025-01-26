@@ -61,6 +61,9 @@ class Word:
         else:
             raise CompilerError("Attempted to append wrong type to word")
 
+    def pop(self, index: int):
+        return self.tags.pop(index)
+
 
 class Scope:
     """
