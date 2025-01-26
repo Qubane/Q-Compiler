@@ -42,6 +42,9 @@ class Word:
     def __iter__(self):
         return self.tags.__iter__()
 
+    def __len__(self):
+        return len(self.tags)
+
     def __getitem__(self, item):
         return self.tags.__getitem__(item)
 
@@ -69,6 +72,9 @@ class Scope:
 
     def __iter__(self):
         return self.words.__iter__()
+
+    def __len__(self):
+        return len(self.words)
 
     def add(self, word: Word | Any):
         """
