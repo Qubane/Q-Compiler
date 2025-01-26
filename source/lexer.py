@@ -56,15 +56,15 @@ class Lexer:
             elif char == "\n" or char == "\t" or char == ";":  # special characters
                 if char == ";":  # comments
                     is_commented = True
-                if char == "\t":  # level up
-                    word.tags.append(Tag(">", TagType.INTERNAL))
                 if buffer:  # append last tag from buffer
                     word.add(Tag(buffer))
-                if len(word.tags) > 1:  # make and append the word
+                if len(word.tags) > 0:  # make and append the word
                     word.line = line_count
                     self.global_scope.add(word)
                     word = Word()
                     buffer = ""
+                if char == "\t":  # level up
+                    word.insert(0, Tag(">", TagType.INTERNAL))
                 if char == "\n":  # increment line counter
                     line_count += 1
             else:  # any other character
