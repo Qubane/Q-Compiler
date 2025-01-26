@@ -79,8 +79,8 @@ class Lexer:
         """
 
         for word in self.global_scope:
+            word: Word  # help type hinting
             for tag in word:
-                tag: Tag  # help type hinting
                 if tag.value in GeneralNamespace:
                     tag.type = GeneralNamespace[tag.value]
                 elif tag.value in self.code_namespace:
@@ -89,6 +89,8 @@ class Lexer:
                     tag.type = TagType.NUMBER
                 elif tag.value[:2] in NamespaceGeneral.number_prefixes:  # non decimal numbers
                     tag.type = TagType.NUMBER
+                else:
+                    tag.type = TagType.POINTER
 
     def evaluate(self):
         """
