@@ -86,6 +86,9 @@ class Scope:
         else:
             raise CompilerError("Attempted to append wrong type to scope")
 
+    def pop(self, index: int):
+        self.words.pop(index)
+
 
 class MacroScope(Scope):
     """
