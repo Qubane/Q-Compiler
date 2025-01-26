@@ -75,7 +75,7 @@ class Parser:
                 # recursively parse scopes to make AST (Abstract Syntax Tree)
                 new_parser = Parser()
                 new_parser.import_scope(scope)
-                new_parser.parse()
+                new_parser.partial_parse()
 
                 # insert back into current scope
                 self.current_scope.insert(idx, scope)
@@ -84,10 +84,17 @@ class Parser:
                     "Unexpected indent",
                     line=word.line)
 
+    def partial_parse(self):
+        """
+        Skips first stage of parsing
+        """
+
+        self._parse_second_stage()
+
     def parse(self):
         """
         Parses imported scope
         """
 
         self._parse_first_stage()
-        self._parse_second_stage()
+        self.partial_parse()
