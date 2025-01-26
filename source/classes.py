@@ -64,6 +64,9 @@ class Word:
     def pop(self, index: int):
         return self.tags.pop(index)
 
+    def insert(self, index: int, item: Any):
+        self.tags.insert(index, item)
+
 
 class Scope:
     """
