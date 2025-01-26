@@ -16,7 +16,7 @@ class Lexer:
 
     def __init__(self):
         self.raw_code: str = ""
-        self.global_scope: GlobalScope = GlobalScope(list())
+        self.global_scope: GlobalScope = GlobalScope()
 
     def import_code(self, code: str) -> None:
         """
