@@ -17,3 +17,9 @@ class CompilerSyntaxError(CompilerError):
     """
     Syntax error called by compiler
     """
+
+
+class CompilerIndentationError(CompilerError):
+    """
+    Indentation error called by compiler
+    """
