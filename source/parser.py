@@ -21,3 +21,8 @@ class Parser:
         """
 
         self.global_scope = scope
+
+    def parse(self):
+        """
+        Parses imported scope
+        """
