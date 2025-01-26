@@ -22,7 +22,14 @@ class Parser:
 
         self.global_scope = scope
 
+    def _parse_first_stage(self):
+        """
+        First stage of parsing
+        """
+
     def parse(self):
         """
         Parses imported scope
         """
+
+        self._parse_first_stage()
