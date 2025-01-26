@@ -81,6 +81,8 @@ class Lexer:
         for word in self.global_scope:
             word: Word  # help type hinting
             for tag in word:
+                if tag.type is not TagType.UNDEFINED:
+                    continue
                 if tag.value in GeneralNamespace:
                     tag.type = GeneralNamespace[tag.value]
                 elif tag.value in self.code_namespace:
