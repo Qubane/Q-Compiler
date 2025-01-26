@@ -92,6 +92,9 @@ class Scope:
     def pop(self, index: int):
         return self.words.pop(index)
 
+    def insert(self, index: int, item: Any):
+        self.words.insert(index, item)
+
 
 class MacroScope(Scope):
     """
