@@ -4,6 +4,7 @@ Sticks all code together
 
 
 from argparse import ArgumentParser, Namespace
+from source.classes import *
 from source.lexer import Lexer
 from source.parser import Parser
 from source.compiler import Compiler
@@ -51,15 +52,12 @@ class Application:
             lexer.import_code(file.read())
         lexer.evaluate()
 
-        for word in lexer.global_scope:
-            print(f"{word.line: <3}", " ".join(f"[{tag.value: >12} {tag.type: <9}]" for tag in word))
+        recursive_scope_print(lexer.global_scope)
         print()
 
         parser = Parser()
         parser.import_scope(lexer.global_scope)
         parser.parse()
 
-        for word in parser.current_scope:
-            # print(f"{word.line: <3}", " ".join(f"[{tag.value: >12} {tag.type: <9}]" for tag in word))
-            print(word)
+        recursive_scope_print(parser.current_scope)
         print()

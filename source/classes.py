@@ -118,3 +118,15 @@ class GlobalScope(Scope):
     """
     Global scope
     """
+
+
+def recursive_scope_print(scope: Scope, level: int = 0):
+    """
+    Recursively prints scopes and scopes within scopes
+    """
+
+    for word in scope:
+        if isinstance(word, Scope):
+            recursive_scope_print(word, level + 1)
+            continue
+        print("  " * level, f"{word.line: <3}", " ".join(f"[{tag.value: >12} {tag.type: <9}]" for tag in word))
