@@ -13,14 +13,6 @@ class DefineNamespace:
 
     definitions: dict[str, TagType] = dict()
 
-    def __contains__(self, item):
-        if isinstance(item, str):
-            return item in self.definitions
-        return False
-
-    def __getitem__(self, item):
-        return self.definitions.__getitem__(item)
-
 
 class CodeNamespace(DefineNamespace):
     """

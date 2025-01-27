@@ -83,10 +83,10 @@ class Lexer:
             for tag in word:
                 if tag.type is not TagType.UNDEFINED:
                     continue
-                if tag.value in GeneralNamespace:
-                    tag.type = GeneralNamespace[tag.value]
-                elif tag.value in self.code_namespace:
-                    tag.type = self.code_namespace[tag.value]
+                if tag.value in GeneralNamespace.definitions:
+                    tag.type = GeneralNamespace.definitions[tag.value]
+                elif tag.value in self.code_namespace.definitions:
+                    tag.type = self.code_namespace.definitions[tag.value]
                 elif tag.value.isnumeric():  # simple decimal numbers
                     tag.type = TagType.NUMBER
                 elif tag.value[:2] in NamespaceGeneral.number_prefixes:  # non decimal numbers
