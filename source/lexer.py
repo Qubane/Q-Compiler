@@ -16,7 +16,7 @@ class Lexer:
 
     def __init__(self):
         self.raw_code: str = ""
-        self.global_scope: GlobalScope = GlobalScope()
+        self.current_scope: GlobalScope = GlobalScope()
 
     def import_code(self, code: str) -> None:
         """
@@ -60,7 +60,7 @@ class Lexer:
                     word.add(Tag(buffer))
                 if len(word.tags) > 0:  # make and append the word
                     word.line = line_count
-                    self.global_scope.add(word)
+                    self.current_scope.add(word)
                     word = Word()
                     buffer = ""
                 if char == "\t":  # level up
@@ -78,7 +78,7 @@ class Lexer:
         Every tag is simply being assigned a type
         """
 
-        for word in self.global_scope:
+        for word in self.current_scope:
             word: Word  # help type hinting
             for tag in word:
                 if tag.type is not TagType.UNDEFINED:
