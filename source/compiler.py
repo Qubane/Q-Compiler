@@ -21,3 +21,8 @@ class Compiler:
         """
 
         self.current_scope = scope
+
+    def _compile_first_stage(self):
+        """
+        First internal compilation stage.
+        """
