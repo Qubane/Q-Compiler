@@ -132,29 +132,42 @@ def recursive_scope_print(scope: Scope, level: int = 0):
         print("  " * level, f"{word.line: <3}", " ".join(f"[{tag.value: >12} {tag.type: <9}]" for tag in word))
 
 
-class Instruction16:
+class InstructionN:
+    """
+    Base class for Quantum architecture
+    """
+
+    def __init__(self, flag: bool, value: int, opcode: int):
+        self.flag: bool = flag
+        self.value: int = value
+        self.opcode: int = opcode
+
+
+class Instruction16(InstructionN):
     """
     16 bit instruction for MQ cpu's
     """
 
     def __init__(self, flag: bool, value: int, opcode: int):
-        self.flag: bool = flag
-        self.value: int = value & 0b1111_1111
-        self.opcode: int = opcode & 0b111_1111
+        super().__init__(
+            flag,
+            value & 0b1111_1111,
+            opcode & 0b111_1111)
 
     def __repr__(self):
         return f"{'1' if self.flag else '0'} {bin(self.value)[2:]:0>8} {bin(self.opcode)[2:]:0>7}"
 
 
-class Instruction24:
+class Instruction24(InstructionN):
     """
     24 bit instruction for QT cpu's
     """
 
     def __init__(self, flag: bool, value: int, opcode: int):
-        self.flag: bool = flag
-        self.value: int = value & 0b1111_1111_1111_1111
-        self.opcode: int = opcode & 0b111_1111
+        super().__init__(
+            flag,
+            value & 0b1111_1111_1111_1111,
+            opcode & 0b111_1111)
 
     def __repr__(self):
         return f"{'1' if self.flag else '0'} {bin(self.value)[2:]:0>16} {bin(self.opcode)[2:]:0>7}"
