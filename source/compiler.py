@@ -32,7 +32,14 @@ class Compiler:
     def _compile_first_stage(self):
         """
         First internal compilation stage.
+
+        Finds all subroutine and macros definitions
         """
+
+        idx = -1
+        while idx < len(self.current_scope)-1:
+            idx += 1
+            word = self.current_scope[idx]
 
     def compile(self):
         """
