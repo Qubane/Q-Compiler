@@ -130,3 +130,31 @@ def recursive_scope_print(scope: Scope, level: int = 0):
             recursive_scope_print(word, level + 1)
             continue
         print("  " * level, f"{word.line: <3}", " ".join(f"[{tag.value: >12} {tag.type: <9}]" for tag in word))
+
+
+class Instruction16:
+    """
+    16 bit instruction for MQ cpu's
+    """
+
+    def __init__(self, flag: bool, value: int, opcode: int):
+        self.flag: bool = flag
+        self.value: int = value & 0b1111_1111
+        self.opcode: int = opcode & 0b111_1111
+
+    def __repr__(self):
+        return f"{'1' if self.flag else '0'} {bin(self.value)[2:]:0>8} {bin(self.opcode)[2:]:0>7}"
+
+
+class Instruction24:
+    """
+    24 bit instruction for QT cpu's
+    """
+
+    def __init__(self, flag: bool, value: int, opcode: int):
+        self.flag: bool = flag
+        self.value: int = value & 0b1111_1111_1111_1111
+        self.opcode: int = opcode & 0b111_1111
+
+    def __repr__(self):
+        return f"{'1' if self.flag else '0'} {bin(self.value)[2:]:0>16} {bin(self.opcode)[2:]:0>7}"
