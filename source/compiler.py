@@ -26,3 +26,10 @@ class Compiler:
         """
         First internal compilation stage.
         """
+
+    def compile(self):
+        """
+        Compiles imported code
+        """
+
+        self._compile_first_stage()
