@@ -47,17 +47,29 @@ class Application:
         self.parse_args()
 
         # temp code for testing
-        lexer = Lexer()
         with open(self.args.input, "r", encoding="ascii") as file:
-            lexer.import_code(file.read())
+            code = file.read()
+
+        lexer = Lexer()
+        lexer.import_code(code)
         lexer.evaluate()
 
-        recursive_scope_print(lexer.global_scope)
-        print()
+        print("[LEXER STAGE START]")
+        recursive_scope_print(lexer.current_scope)
+        print("[LEXER STAGE END]\n")
 
         parser = Parser()
-        parser.import_scope(lexer.global_scope)
+        parser.import_scope(lexer.current_scope)
         parser.parse()
 
+        print("[PARSER STAGE START]")
         recursive_scope_print(parser.current_scope)
-        print()
+        print("[PARSER STAGE END]\n")
+
+        compiler = Compiler()
+        compiler.import_scope(parser.current_scope)
+        compiler.compile()
+
+        print("[COMPILER STAGE START]")
+        recursive_scope_print(compiler.current_scope)
+        print("[COMPILER STAGE END]")
