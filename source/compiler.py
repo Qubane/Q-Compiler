@@ -12,8 +12,15 @@ class Compiler:
     Compiler class
     """
 
+    code_namespace: CodeNamespace = NamespaceQT()
+
     def __init__(self):
         self.current_scope: Scope = Scope()
+
+        self.bytecode: list[InstructionN] = list()
+        self.pointers: list[Tag] = list()
+        self.macros: dict[str, Scope] = dict()
+        self.subroutines: dict[str, Scope] = dict()
 
     def import_scope(self, scope: Scope):
         """
