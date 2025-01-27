@@ -84,9 +84,9 @@ class Lexer:
                 if tag.type is not TagType.UNDEFINED:
                     continue
                 if tag.value in GeneralNamespace.definitions:
-                    tag.type = GeneralNamespace.definitions[tag.value]
+                    tag.type = GeneralNamespace.definitions[tag.value].type
                 elif tag.value in self.code_namespace.definitions:
-                    tag.type = self.code_namespace.definitions[tag.value]
+                    tag.type = self.code_namespace.definitions[tag.value].type
                 elif tag.value.isnumeric():  # simple decimal numbers
                     tag.type = TagType.NUMBER
                 elif tag.value[:2] in NamespaceGeneral.number_prefixes:  # non decimal numbers
