@@ -52,9 +52,15 @@ class Compiler:
                     self.current_scope.pop(idx)])
                 idx -= 1
 
+    def _compile_second_stage(self):
+        """
+        Second internal compilation stage.
+        """
+
     def compile(self):
         """
         Compiles imported code
         """
 
         self._compile_first_stage()
+        self._compile_second_stage()
