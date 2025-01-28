@@ -41,6 +41,17 @@ class Compiler:
             idx += 1
             word = self.current_scope[idx]
 
+            if word[0].value == "macro":
+                self.macros[word[1].value] = MacroScope([
+                    self.current_scope.pop(idx),
+                    self.current_scope.pop(idx)])
+                idx -= 1
+            elif word[0].value == "subr":
+                self.subroutines[word[1].value] = SubroutineScope([
+                    self.current_scope.pop(idx),
+                    self.current_scope.pop(idx)])
+                idx -= 1
+
     def compile(self):
         """
         Compiles imported code
