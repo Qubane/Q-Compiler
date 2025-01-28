@@ -38,17 +38,6 @@ class Parser:
                     f"built-in '{word[0].value}' followed by a non-pointer argument",
                     line=word.line)
 
-            # check 'uses' keyword
-            for idx, tag in enumerate(word):
-                tag: Tag  # help type hinting
-                if tag.value == "uses":
-                    break
-            for tag in word[idx+1:]:
-                if tag.type is not TagType.POINTER:
-                    raise CompilerSyntaxError(
-                        f"built-in '{word[idx].value}' followed by a non-pointer argument(s)",
-                        line=word.line)
-
     def _parse_second_stage(self):
         """
         Second stage of parsing
