@@ -15,8 +15,23 @@ macro test_macro uses x1 x2 x3
     add x3      ; adds x3 to acc
 
 ; test of subroutine
-subr test_sub uses x1 x2 x3
-    load x1     ; loads x1 into acc
-    add x2      ; adds x2 to acc
-    sub x3      ; subtracts x3 from acc
+subr test_sub
+    pop         ; pop last val from stack
+    store t     ; store in temp variable
+    pop         ; pop another val from stack
+    add t       ; add temp variable to value from stack
     return      ; returns back
+
+; insert code of test_macro with given numbers
+test_macro uses 10 11 12
+
+; push arguments into stack and call a subroutine
+load 30
+push
+load 50
+push
+call test_sub
+
+; halt the computation
+halt
+
