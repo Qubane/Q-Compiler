@@ -19,6 +19,12 @@ class CompilerSyntaxError(CompilerError):
     """
 
 
+class CompilerValueError(CompilerError):
+    """
+    Error when converting NUMBER tag to true int
+    """
+
+
 class CompilerIndentationError(CompilerError):
     """
     Indentation error called by compiler
