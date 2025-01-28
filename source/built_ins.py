@@ -41,7 +41,10 @@ class NamespaceGeneral(DefineNamespace):
         "uses": Definition(TagType.BUILT_IN, -1),
     }
 
-    number_prefixes: set[str] = {"0b", "0x"}
+    number_prefixes: dict[str, int] = {
+        "0b": 2,
+        "0x": 16
+    }
 
 
 GeneralNamespace = NamespaceGeneral()
