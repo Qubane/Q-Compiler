@@ -186,12 +186,6 @@ class Compiler:
         """
 
         self._compile_first_stage()
-
-        for val in self.subroutines.values():
-            recursive_scope_print(val)
-        for val in self.macros.values():
-            recursive_scope_print(val)
-
         self._compile_second_stage()
         self._compile_third_stage()
         self._compile_forth_stage()
