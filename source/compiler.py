@@ -94,19 +94,19 @@ class Compiler:
             # instructions with arguments
             if word[0].value in self.code_namespace.definitions and len(word) == 2:
                 memory_flag = word[1].type is TagType.POINTER
-                if memory_flag:
-                    if word[1].value in self.pointers:
+                if memory_flag:  # it's a pointer
+                    if word[1].value in self.pointers:  # pointer value was already defined
                         instruction_value = self.pointers[word[1].value]
-                    elif word[1].value in self.subroutines:
+                    elif word[1].value in self.subroutines:  # define pointer as subroutine scope reference
                         self.pointers[word[1].value] = Tag(self.subroutines[word[1].value], TagType.POINTER)
                         instruction_value = self.pointers[word[1].value]
-                    elif word[1].value in self.macros:
+                    elif word[1].value in self.macros:  # I don't know what that would be
                         raise CompilerNotImplementedError(line=word.line)
-                    else:
+                    else:  # define pointer as generic integer
                         self.pointer_counter += 1
                         self.pointers[word[1].value] = Tag(self.pointer_counter, TagType.POINTER)
                         instruction_value = self.pointers[word[1].value]
-                else:
+                else:  # it's a number
                     instruction_value = word[1]
                 self.instructions.append(TaggedInstruction(
                     flag=memory_flag,
@@ -122,11 +122,11 @@ class Compiler:
 
             # macros
             elif word[0].type is TagType.POINTER and word[0].value in self.macros:
-                self.current_scope.pop(idx)
-                scope = self._generate_macro_scope(idx, word[0].value, word[2:])
-                for word in scope[::-1]:
+                self.current_scope.pop(idx)  # get rid of macro pointer
+                scope = self._generate_macro_scope(idx, word[0].value, word[2:])  # generate factored macro scope
+                for word in scope[::-1]:  # insert into 'to be processed' scope part
                     self.current_scope.insert(idx, word)
-                idx -= 1
+                idx -= 1  # account for index
 
     def compile(self):
         """
