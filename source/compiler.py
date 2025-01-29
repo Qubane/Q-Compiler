@@ -31,6 +31,33 @@ class Compiler:
 
         self.current_scope = scope
 
+    def _generate_macro_scope(self, index: int, name: str, args: list[Tag]):
+        """
+        Insert a macro at a given index
+        """
+
+        macro = self.macros[name].__copy__()
+
+        # macro with multiple args
+        if len(macro[0]) > 2:
+            # translation dictionary
+            for old, new in zip(macro[0][3:], args):
+                self._match_and_replace(macro[1], old, new)
+        return macro[1]
+
+    def _match_and_replace(self, scope: Scope, old: Tag, new: Tag):
+        """
+        Match and replace all tags within scope from old to new
+        """
+
+        for word in scope:
+            if isinstance(word, Word):
+                for idx, tag in enumerate(word):
+                    if tag == old:
+                        word[idx] = new
+            else:
+                self._match_and_replace(word, old, new)
+
     def _compile_first_stage(self):
         """
         First internal compilation stage.
@@ -95,11 +122,11 @@ class Compiler:
 
             # macros
             elif word[0].type is TagType.POINTER and word[0].value in self.macros:
-                pass
-
-        print(len(self.instructions))
-        for instruction in self.instructions:
-            print(instruction)
+                self.current_scope.pop(idx)
+                scope = self._generate_macro_scope(idx, word[0].value, word[2:])
+                for word in scope[::-1]:
+                    self.current_scope.insert(idx, word)
+                idx -= 1
 
     def compile(self):
         """
@@ -107,4 +134,10 @@ class Compiler:
         """
 
         self._compile_first_stage()
+
+        for val in self.subroutines.values():
+            recursive_scope_print(val)
+        for val in self.macros.values():
+            recursive_scope_print(val)
+
         self._compile_second_stage()
