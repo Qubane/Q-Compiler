@@ -84,12 +84,15 @@ class Compiler:
     def _compile_second_stage(self):
         """
         Second internal compilation stage.
+
+        Compiles words into TaggedInstructions.
+        Grants address values to variable pointers.
+        Grants scope references to subroutine pointers.
+        Inserts macro code into current scope for processing.
         """
 
-        idx = -1
-        while idx < len(self.current_scope) - 1:
-            idx += 1
-            word = self.current_scope[idx]
+        while len(self.current_scope):
+            word = self.current_scope.pop(0)
 
             # instructions with arguments
             if word[0].value in self.code_namespace.definitions and len(word) == 2:
@@ -122,11 +125,9 @@ class Compiler:
 
             # macros
             elif word[0].type is TagType.POINTER and word[0].value in self.macros:
-                self.current_scope.pop(idx)  # get rid of macro pointer
-                scope = self._generate_macro_scope(idx, word[0].value, word[2:])  # generate factored macro scope
+                scope = self._generate_macro_scope(0, word[0].value, word[2:])  # generate factored macro scope
                 for word in scope[::-1]:  # insert into 'to be processed' scope part
-                    self.current_scope.insert(idx, word)
-                idx -= 1  # account for index
+                    self.current_scope.insert(0, word)
 
     def compile(self):
         """
