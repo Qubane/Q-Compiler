@@ -137,10 +137,13 @@ class InstructionN:
     Base class for Quantum architecture
     """
 
-    def __init__(self, flag: bool, value: int, opcode: int):
+    def __init__(self, flag: bool, value: Any, opcode: int):
         self.flag: bool = flag
-        self.value: int = value
+        self.value: Any = value
         self.opcode: int = opcode
+
+    def __repr__(self):
+        return f"{'1' if self.flag else '0'} {self.value.__repr__(): <32} {self.opcode: <3}"
 
 
 class Instruction16(InstructionN):
