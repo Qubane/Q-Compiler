@@ -71,5 +71,7 @@ class Application:
         compiler.compile()
 
         print("[COMPILER STAGE START]")
-        recursive_scope_print(compiler.current_scope)
+        # recursive_scope_print(compiler.current_scope)
+        for instruction in compiler.instructions:
+            print(instruction)
         print("[COMPILER STAGE END]")
