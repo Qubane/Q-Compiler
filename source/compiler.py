@@ -156,6 +156,15 @@ class Compiler:
             if instruction.value.value in locations:
                 instruction.value.value = locations[instruction.value.value]
 
+    def _compile_forth_stage(self):
+        """
+        Forth internal compilation stage.
+
+        Converts TaggedInstructions to InstructionN class.
+        If 'self.code_namespace' is set to QM lineage of cpu's, then the output is Instruction16
+        If 'self.code_namespace' is set to QT lineage of cpu's, then the output is Instruction24
+        """
+
     def compile(self):
         """
         Compiles imported code
@@ -170,3 +179,4 @@ class Compiler:
 
         self._compile_second_stage()
         self._compile_third_stage()
+        self._compile_forth_stage()
