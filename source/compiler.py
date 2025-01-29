@@ -16,7 +16,7 @@ class Compiler:
     def __init__(self):
         self.current_scope: Scope = Scope()
 
-        self.instructions: list[TaggedInstruction | Tag] = list()
+        self.instructions: list[TaggedInstruction] = list()
 
         self.pointers: dict[str, Tag] = dict()
         self.pointer_counter: int = -1
@@ -101,7 +101,7 @@ class Compiler:
                     if word[1].value in self.pointers:  # pointer value was already defined
                         instruction_value = self.pointers[word[1].value]
                     elif word[1].value in self.subroutines:  # define pointer as subroutine scope reference
-                        self.pointers[word[1].value] = Tag(self.subroutines[word[1].value], TagType.POINTER)
+                        self.pointers[word[1].value] = Tag(word[1].value, TagType.POINTER)
                         instruction_value = self.pointers[word[1].value]
                     elif word[1].value in self.macros:  # I don't know what that would be
                         raise CompilerNotImplementedError(line=word.line)
@@ -129,6 +129,32 @@ class Compiler:
                 for word in scope[::-1]:  # insert into 'to be processed' scope part
                     self.current_scope.insert(0, word)
 
+    def _compile_third_stage(self):
+        """
+        Third internal compilation stage.
+
+        Inserts subroutines at the end of the 'self.current_scope'.
+        Grants proper address pointers to operations that reference subroutines.
+        Recalls second compilation stage to process the inserted code.
+        """
+
+        # subroutine name -> address table
+        locations = {}
+
+        # insert subroutines at the end of the instruction list
+        for subroutine_name, subroutine_scope in self.subroutines.items():
+            scope = subroutine_scope.__copy__()
+            locations[subroutine_name] = len(self.instructions)
+            for word in scope[1]:
+                self.current_scope.add(word)
+            self._compile_second_stage()
+
+        # go through TaggedInstructions and replace references to 'subroutine_scope' with addresses
+        # from 'locations' table
+        for instruction in self.instructions:
+            if instruction.value.value in locations:
+                instruction.value.value = locations[instruction.value.value]
+
     def compile(self):
         """
         Compiles imported code
@@ -142,3 +168,4 @@ class Compiler:
             recursive_scope_print(val)
 
         self._compile_second_stage()
+        self._compile_third_stage()
