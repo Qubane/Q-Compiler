@@ -48,6 +48,9 @@ class Word:
     def __getitem__(self, item):
         return self.tags.__getitem__(item)
 
+    def __setitem__(self, key, value):
+        return self.tags.__setitem__(key, value)
+
     def __repr__(self):
         return " ".join(f"[{tag.value}]" for tag in self.tags)
 
