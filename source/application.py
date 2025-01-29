@@ -5,6 +5,7 @@ Sticks all code together
 
 from argparse import ArgumentParser, Namespace
 from source.classes import *
+from source.built_ins import NamespaceQMr11, NamespaceQT
 from source.lexer import Lexer
 from source.parser import Parser
 from source.compiler import Compiler
@@ -32,10 +33,14 @@ class Application:
                             required=True)
         parser.add_argument("-o", "--output",
                             help="compiled bytecode output")
-        parser.add_argument("-v", "--verbose",
-                            help="verbose output",
-                            action="store_true",
-                            default=False)
+        # parser.add_argument("-v", "--verbose",
+        #                     help="verbose output",
+        #                     action="store_true",
+        #                     default=False)
+        parser.add_argument("--namespace",
+                            help="code namespace",
+                            choices=["QT", "QM"],
+                            default="QT")
 
         self.args = parser.parse_args()
 
@@ -44,13 +49,23 @@ class Application:
         Runs the application
         """
 
+        # parse arguments
         self.parse_args()
 
-        # temp code for testing
+        # used namespace
+        match self.args.namespace:
+            case "QM":
+                namespace = NamespaceQMr11
+            case _:
+                namespace = NamespaceQT
+
+        # input file
         with open(self.args.input, "r", encoding="ascii") as file:
             code = file.read()
 
+        # Lexing stage
         lexer = Lexer()
+        lexer.code_namespace = namespace
         lexer.import_code(code)
         lexer.evaluate()
 
@@ -58,6 +73,7 @@ class Application:
         recursive_scope_print(lexer.current_scope)
         print("[LEXER STAGE END]\n")
 
+        # Parsing stage
         parser = Parser()
         parser.import_scope(lexer.current_scope)
         parser.parse()
@@ -66,11 +82,20 @@ class Application:
         recursive_scope_print(parser.current_scope)
         print("[PARSER STAGE END]\n")
 
+        # Compilation stage
         compiler = Compiler()
+        compiler.code_namespace = namespace
         compiler.import_scope(parser.current_scope)
         compiler.compile()
 
         print("[COMPILER STAGE START]")
-        for instruction in compiler.bytecode:
-            print(instruction)
+        for idx, instruction in enumerate(compiler.bytecode):
+            print(
+                f"{idx:04x}:    "
+                f"{'1' if instruction.flag else '0'} {instruction.value:02X} {instruction.opcode:02X}    "
+                f"{compiler.instructions[idx].opcode.value: <7}", end="")
+            if instruction.value:  # if value is above zero
+                print(f"0x{instruction.value:02X}   # {instruction.value}")
+            else:
+                print()
         print("[COMPILER STAGE END]")
