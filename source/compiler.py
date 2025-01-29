@@ -16,6 +16,7 @@ class Compiler:
     def __init__(self):
         self.current_scope: Scope = Scope()
 
+        self.bytecode: list[InstructionN] = list()
         self.instructions: list[TaggedInstruction] = list()
 
         self.pointers: dict[str, Tag] = dict()
