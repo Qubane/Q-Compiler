@@ -29,3 +29,9 @@ class CompilerIndentationError(CompilerError):
     """
     Indentation error called by compiler
     """
+
+
+class CompilerNotImplementedError(CompilerError):
+    """
+    Yes.
+    """
