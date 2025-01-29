@@ -132,18 +132,32 @@ def recursive_scope_print(scope: Scope, level: int = 0):
         print("  " * level, f"{word.line: <3}", " ".join(f"[{tag.value: >12} {tag.type: <9}]" for tag in word))
 
 
+class TaggedInstruction:
+    """
+    Like instruction, except it uses tags
+    """
+
+    def __init__(self, flag: bool, value: Tag, opcode: Tag):
+        self.flag: bool = flag
+        self.value: Tag = value
+        self.opcode: Tag = opcode
+
+    def __repr__(self):
+        return f"{'1' if self.flag else '0'} {self.value.__repr__(): <32} {self.opcode.__repr__(): <32}"
+
+
 class InstructionN:
     """
     Base class for Quantum architecture
     """
 
-    def __init__(self, flag: bool, value: Any, opcode: int):
+    def __init__(self, flag: bool, value: int, opcode: int):
         self.flag: bool = flag
-        self.value: Any = value
+        self.value: int = value
         self.opcode: int = opcode
 
     def __repr__(self):
-        return f"{'1' if self.flag else '0'} {self.value.__repr__(): <32} {self.opcode: <3}"
+        return f"{'1' if self.flag else '0'} {str(self.value): <3} {self.opcode: <3}"
 
 
 class Instruction16(InstructionN):
