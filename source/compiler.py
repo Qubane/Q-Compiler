@@ -59,7 +59,8 @@ class Compiler:
             else:
                 self._match_and_replace(word, old, new)
 
-    def _convert_tagged2byte(self, instruction: TaggedInstruction) -> InstructionN:
+    @staticmethod
+    def _convert_tagged2byte(instruction: TaggedInstruction, namespace: CodeNamespace) -> InstructionN:
         """
         Converts 'instruction' to bytecode restricted instruction
         """
@@ -67,7 +68,7 @@ class Compiler:
         return InstructionN(
             flag=instruction.flag,
             value=int(instruction.value.value),  # make sure it's int
-            opcode=self.code_namespace.definitions[instruction.opcode.value].opcode)
+            opcode=namespace.definitions[instruction.opcode.value].opcode)
 
     def _compile_first_stage(self):
         """
@@ -176,7 +177,8 @@ class Compiler:
         """
 
         for instruction in self.instructions:
-
+            self.bytecode.append(
+                self._convert_tagged2byte(instruction))
 
     def compile(self):
         """
