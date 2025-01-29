@@ -2,11 +2,12 @@
 load 10
 add 59
 store A
+store B
 
 ; test of number types
 load 0b10011001     ; number in binary form
 load 0xfe           ; number in hexadecimal form
-load 11             ; number in decimal form
+load 39             ; number in decimal form
 
 ; test of macro
 macro test_macro uses x1 x2 x3
