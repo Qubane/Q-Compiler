@@ -178,7 +178,7 @@ class Compiler:
 
         for instruction in self.instructions:
             self.bytecode.append(
-                self._convert_tagged2byte(instruction))
+                self._convert_tagged2byte(instruction, self.code_namespace))
 
     def compile(self):
         """
