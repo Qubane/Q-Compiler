@@ -5,7 +5,7 @@ Compiler classes
 
 from typing import Any
 from enum import StrEnum
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from source.exceptions import *
 
 
@@ -35,9 +35,12 @@ class Word:
     Instruction word
     """
 
-    def __init__(self, tags: list[Tag] | None = None):
+    def __init__(self, tags: list[Tag] | None = None, line: int = -1):
         self.tags: list[Tag] = tags if tags is not None else list()
-        self.line: int = -1
+        self.line: int = line
+
+    def __copy__(self):
+        return self.__class__([replace(tag) for tag in self.tags], self.line)
 
     def __iter__(self):
         return self.tags.__iter__()
@@ -78,6 +81,9 @@ class Scope:
 
     def __init__(self, words: list | None = None):
         self.words: list[Word | Scope] = words if words is not None else list()
+
+    def __copy__(self):
+        return self.__class__([word.__copy__() for word in self.words])
 
     def __iter__(self):
         return self.words.__iter__()
