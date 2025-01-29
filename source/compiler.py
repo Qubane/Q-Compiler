@@ -59,6 +59,16 @@ class Compiler:
             else:
                 self._match_and_replace(word, old, new)
 
+    def _convert_tagged2byte(self, instruction: TaggedInstruction) -> InstructionN:
+        """
+        Converts 'instruction' to bytecode restricted instruction
+        """
+
+        return InstructionN(
+            flag=instruction.flag,
+            value=int(instruction.value.value),  # make sure it's int
+            opcode=self.code_namespace.definitions[instruction.opcode.value].opcode)
+
     def _compile_first_stage(self):
         """
         First internal compilation stage.
@@ -164,6 +174,9 @@ class Compiler:
         If 'self.code_namespace' is set to QM lineage of cpu's, then the output is Instruction16
         If 'self.code_namespace' is set to QT lineage of cpu's, then the output is Instruction24
         """
+
+        for instruction in self.instructions:
+
 
     def compile(self):
         """
