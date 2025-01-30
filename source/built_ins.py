@@ -29,6 +29,8 @@ class CodeNamespace(DefineNamespace):
     Namespace for code definitions
     """
 
+    instruction_class: InstructionN = InstructionN
+
 
 class NamespaceGeneral(DefineNamespace):
     """
@@ -55,6 +57,7 @@ class NamespaceQMr11(CodeNamespace):
     Quantum Mini rev. 1.1 built-ins
     """
 
+    instruction_class: InstructionN = Instruction16
     definitions: dict[str, Definition] = {
         "NOP": Definition(TagType.BUILT_IN, 0),
         "LRA": Definition(TagType.BUILT_IN, 1),
@@ -113,6 +116,7 @@ class NamespaceQT(CodeNamespace):
     Quantum Tera (cutie :3) built-ins
     """
 
+    instruction_class: InstructionN = Instruction24
     definitions: dict[str, Definition] = {
         "nop": Definition(TagType.BUILT_IN, 0),
         "load": Definition(TagType.BUILT_IN, 1),
