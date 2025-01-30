@@ -65,7 +65,7 @@ class Compiler:
         Converts 'instruction' to bytecode restricted instruction
         """
 
-        return InstructionN(
+        return namespace.instruction_class(
             flag=instruction.flag,
             value=int(instruction.value.value),  # make sure it's int
             opcode=namespace.definitions[instruction.opcode.value].opcode)
