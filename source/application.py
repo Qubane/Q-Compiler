@@ -5,10 +5,11 @@ Sticks all code together
 
 from argparse import ArgumentParser, Namespace
 from source.classes import *
-from source.built_ins import NamespaceQMr11, NamespaceQT
 from source.lexer import Lexer
+from source.file_io import dump
 from source.parser import Parser
 from source.compiler import Compiler
+from source.built_ins import NamespaceQMr11, NamespaceQT
 
 
 class Application:
@@ -55,9 +56,9 @@ class Application:
         # used namespace
         match self.args.namespace:
             case "QM":
-                namespace = NamespaceQMr11
+                namespace = NamespaceQMr11()
             case _:
-                namespace = NamespaceQT
+                namespace = NamespaceQT()
 
         # input file
         with open(self.args.input, "r", encoding="ascii") as file:
@@ -98,4 +99,9 @@ class Application:
                 print(f"0x{instruction.value:02X}   # {instruction.value}")
             else:
                 print()
-        print("[COMPILER STAGE END]")
+        print("[COMPILER STAGE END]", end="\n\n")
+
+        # check output argument, and dump to file
+        if self.args.output:
+            bytes_written = dump(compiler.bytecode, self.args.output, namespace)
+            print(f"{bytes_written} bytes written to '{self.args.output}'")
