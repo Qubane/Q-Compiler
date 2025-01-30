@@ -91,10 +91,21 @@ class Application:
 
         print("[COMPILER STAGE START]")
         for idx, instruction in enumerate(compiler.bytecode):
-            print(
-                f"{idx:04x}:    "
-                f"{'1' if instruction.flag else '0'} {instruction.value:02X} {instruction.opcode:02X}    "
-                f"{compiler.instructions[idx].opcode.value: <7}", end="")
+            # line index
+            print(f"{idx:04x}    ", end="")
+
+            # instruction bytecode
+            if isinstance(namespace, NamespaceQT):
+                print(f"{'1' if instruction.flag else '0'} {instruction.value:04X} {instruction.opcode:02X}    ",
+                      end="")
+            elif isinstance(namespace, NamespaceQMr11):
+                print(f"{'1' if instruction.flag else '0'} {instruction.value:02X} {instruction.opcode:02X}    ",
+                      end="")
+
+            # instruction name
+            print(f"{compiler.instructions[idx].opcode.value: <7}", end="")
+
+            # instruction value
             if instruction.value:  # if value is above zero
                 print(f"0x{instruction.value:02X}   # {instruction.value}")
             else:
