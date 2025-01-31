@@ -147,12 +147,20 @@ class TaggedInstruction:
     """
 
     def __init__(self, flag: bool, value: Tag, opcode: Tag):
-        self.flag: bool = flag
         self.value: Tag = value
         self.opcode: Tag = opcode
+        self.flag: bool = flag
 
     def __repr__(self):
         return f"{'1' if self.flag else '0'} {self.value.__repr__(): <32} {self.opcode.__repr__(): <32}"
+
+    @property
+    def flag(self):
+        return self.value.type is TagType.POINTER
+
+    @flag.setter
+    def flag(self, item):
+        self.value.type = TagType.POINTER if item else TagType.NUMBER
 
 
 class InstructionN:
