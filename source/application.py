@@ -5,10 +5,11 @@ Sticks all code together
 
 from argparse import ArgumentParser, Namespace
 from source.classes import *
-from source.built_ins import NamespaceQMr11, NamespaceQT
 from source.lexer import Lexer
+from source.file_io import dump
 from source.parser import Parser
 from source.compiler import Compiler
+from source.built_ins import NamespaceQMr11, NamespaceQT
 
 
 class Application:
@@ -55,9 +56,9 @@ class Application:
         # used namespace
         match self.args.namespace:
             case "QM":
-                namespace = NamespaceQMr11
+                namespace = NamespaceQMr11()
             case _:
-                namespace = NamespaceQT
+                namespace = NamespaceQT()
 
         # input file
         with open(self.args.input, "r", encoding="ascii") as file:
@@ -90,12 +91,28 @@ class Application:
 
         print("[COMPILER STAGE START]")
         for idx, instruction in enumerate(compiler.bytecode):
-            print(
-                f"{idx:04x}:    "
-                f"{'1' if instruction.flag else '0'} {instruction.value:02X} {instruction.opcode:02X}    "
-                f"{compiler.instructions[idx].opcode.value: <7}", end="")
+            # line index
+            print(f"{idx:04x}    ", end="")
+
+            # instruction bytecode
+            if isinstance(namespace, NamespaceQT):
+                print(f"{'1' if instruction.flag else '0'} {instruction.value:04X} {instruction.opcode:02X}    ",
+                      end="")
+            elif isinstance(namespace, NamespaceQMr11):
+                print(f"{'1' if instruction.flag else '0'} {instruction.value:02X} {instruction.opcode:02X}    ",
+                      end="")
+
+            # instruction name
+            print(f"{compiler.instructions[idx].opcode.value: <7}", end="")
+
+            # instruction value
             if instruction.value:  # if value is above zero
                 print(f"0x{instruction.value:02X}   # {instruction.value}")
             else:
                 print()
-        print("[COMPILER STAGE END]")
+        print("[COMPILER STAGE END]", end="\n\n")
+
+        # check output argument, and dump to file
+        if self.args.output:
+            bytes_written = dump(compiler.bytecode, self.args.output, namespace)
+            print(f"{bytes_written} bytes written to '{self.args.output}'")

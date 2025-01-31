@@ -176,6 +176,9 @@ class InstructionN:
     def __repr__(self):
         return f"{'1' if self.flag else '0'} {str(self.value): <3} {self.opcode: <3}"
 
+    def __bytes__(self):
+        return self.flag.to_bytes(1) + self.value.to_bytes(4) + self.opcode.to_bytes(1)
+
 
 class Instruction16(InstructionN):
     """
@@ -191,6 +194,9 @@ class Instruction16(InstructionN):
     def __repr__(self):
         return f"{'1' if self.flag else '0'} {bin(self.value)[2:]:0>8} {bin(self.opcode)[2:]:0>7}"
 
+    def __bytes__(self):
+        return self.flag.to_bytes(1) + self.value.to_bytes(1) + self.opcode.to_bytes(1)
+
 
 class Instruction24(InstructionN):
     """
@@ -205,3 +211,6 @@ class Instruction24(InstructionN):
 
     def __repr__(self):
         return f"{'1' if self.flag else '0'} {bin(self.value)[2:]:0>16} {bin(self.opcode)[2:]:0>7}"
+
+    def __bytes__(self):
+        return self.flag.to_bytes(1) + self.value.to_bytes(2) + self.opcode.to_bytes(1)
