@@ -9,6 +9,11 @@ load 0b10011001     ; number in binary form
 load 0xfe           ; number in hexadecimal form
 load 39             ; number in decimal form
 
+; test stored variables
+load A
+mul B
+store AB
+
 ; test of macro
 macro test_macro uses x1 x2 x3
     load x1     ; loads x1 into acc
