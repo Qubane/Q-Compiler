@@ -111,7 +111,7 @@ class Compiler:
                 memory_flag = word[1].type is TagType.POINTER
                 if memory_flag:  # it's a pointer
                     if word[1].value in self.pointers:  # pointer value was already defined
-                        instruction_value = self.pointers[word[1].value]
+                        instruction_value = replace(self.pointers[word[1].value])
                     elif word[1].value in self.subroutines:  # define pointer as subroutine scope reference
                         self.pointers[word[1].value] = Tag(word[1].value, TagType.POINTER)
                         instruction_value = self.pointers[word[1].value]
@@ -122,7 +122,7 @@ class Compiler:
                         self.pointers[word[1].value] = Tag(self.pointer_counter, TagType.POINTER)
                         instruction_value = self.pointers[word[1].value]
                 else:  # it's a number
-                    instruction_value = word[1]
+                    instruction_value = replace(word[1])
                 self.instructions.append(TaggedInstruction(
                     flag=memory_flag,
                     value=instruction_value,
@@ -148,6 +148,7 @@ class Compiler:
         Inserts subroutines at the end of the 'self.current_scope'.
         Grants proper address pointers to operations that reference subroutines.
         Recalls second compilation stage to process the inserted code.
+        Sets memory flag to False for subroutine calls and store instructions
         """
 
         # subroutine name -> address table
@@ -166,6 +167,10 @@ class Compiler:
         for instruction in self.instructions:
             if instruction.value.value in locations:
                 instruction.value.value = locations[instruction.value.value]
+                instruction.flag = False
+            # 2 - store or SRA instructions for Quantum CPU's
+            if self.code_namespace.definitions[instruction.opcode.value].opcode == 2:
+                instruction.flag = False
 
     def _compile_forth_stage(self):
         """
