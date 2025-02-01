@@ -95,7 +95,10 @@ class Application:
 
             # instruction value
             if instruction.value:  # if value is above zero
-                print(f"0x{instruction.value:02X}   # {instruction.value}")
+                if isinstance(self.code_namespace, NamespaceQT):
+                    print(f"0x{instruction.value:04X}   # {instruction.value}")
+                elif isinstance(self.code_namespace, NamespaceQMr11):
+                    print(f"0x{instruction.value:02X}   # {instruction.value}")
             else:
                 print()
 
