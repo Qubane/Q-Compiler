@@ -61,6 +61,15 @@ class Parser:
                         break
                     word_.pop(0)
                     scope.add(self.current_scope.pop(idx))
+
+                # check for correct indent after the keyword
+                if idx < len(self.current_scope):
+                    next_word = self.current_scope[idx+1]
+                    if next_word[0].type is not TagType.INTERNAL and next_word[0].value != ">":
+                        raise CompilerIndentationError(
+                            "Expected indent, got nothing",
+                            line=word.line)
+
                 # recursively parse scopes to make AST (Abstract Syntax Tree)
                 new_parser = Parser()
                 new_parser.import_scope(scope)
