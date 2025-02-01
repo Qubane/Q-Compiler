@@ -150,6 +150,6 @@ class NamespaceQT(CodeNamespace):
         "mod": Definition(TagType.BUILT_IN, 40),
         "portw": Definition(TagType.BUILT_IN, 96),
         "portr": Definition(TagType.BUILT_IN, 97),
-        "interupt": Definition(TagType.BUILT_IN, 126),
+        "int": Definition(TagType.BUILT_IN, 126),
         "halt": Definition(TagType.BUILT_IN, 127),
     }
