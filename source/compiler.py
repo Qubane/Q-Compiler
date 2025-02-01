@@ -17,9 +17,10 @@ class Compiler:
         self.current_scope: Scope = Scope()
 
         self.bytecode: list[InstructionN] = list()
-        self.instructions: list[TaggedInstruction] = list()
+        self.instructions: list[TaggedInstruction | Tag] = list()
 
         self.pointers: dict[str, Tag] = dict()
+        self.address_pointers: dict[str, Tag] = dict()
         self.pointer_counter: int = -1
 
         self.macros: dict[str, Scope] = dict()
@@ -82,6 +83,7 @@ class Compiler:
             idx += 1
             word = self.current_scope[idx]
 
+            # keywords
             if word[0].value == "macro":
                 self.macros[word[1].value] = MacroScope([
                     self.current_scope.pop(idx),
@@ -93,6 +95,10 @@ class Compiler:
                     self.current_scope.pop(idx)])
                 idx -= 1
 
+            # address pointer
+            elif word[0].type is TagType.POINTER and word[0].value[0] == "@":
+                self.address_pointers[word[0].value] = word[0]
+
     def _compile_second_stage(self):
         """
         Second internal compilation stage.
@@ -101,6 +107,7 @@ class Compiler:
         Grants address values to variable pointers.
         Grants scope references to subroutine pointers.
         Inserts macro code into current scope for processing.
+        Inserts address pointer tags for jumps.
         """
 
         while len(self.current_scope):
@@ -112,7 +119,8 @@ class Compiler:
                 if memory_flag:  # it's a pointer
                     if word[1].value in self.pointers:  # pointer value was already defined
                         instruction_value = replace(self.pointers[word[1].value])
-                    elif word[1].value in self.subroutines:  # define pointer as subroutine scope reference
+                    elif (word[1].value in self.subroutines or
+                          word[1].value in self.address_pointers):  # define pointer
                         self.pointers[word[1].value] = Tag(word[1].value, TagType.POINTER)
                         instruction_value = self.pointers[word[1].value]
                     elif word[1].value in self.macros:  # I don't know what that would be
@@ -141,32 +149,61 @@ class Compiler:
                 for word in scope[::-1]:  # insert into 'to be processed' scope part
                     self.current_scope.insert(0, word)
 
+            # address pointers
+            elif word[0].type is TagType.POINTER and word[0].value in self.address_pointers:
+                self.instructions.append(word[0])
+
     def _compile_third_stage(self):
         """
         Third internal compilation stage.
 
         Inserts subroutines at the end of the 'self.current_scope'.
         Grants proper address pointers to operations that reference subroutines.
-        Recalls second compilation stage to process the inserted code.
+        TODO: recursively compiles subroutine code
         Sets memory flag to False for subroutine calls and store instructions
         """
 
         # subroutine name -> address table
-        locations = {}
+        subroutine_pointers = {}
 
         # insert subroutines at the end of the instruction list
         for subroutine_name, subroutine_scope in self.subroutines.items():
             scope = subroutine_scope.__copy__()
-            locations[subroutine_name] = len(self.instructions)
+            subroutine_pointers[subroutine_name] = len(self.instructions)
             for word in scope[1]:
                 self.current_scope.add(word)
             self._compile_second_stage()
 
+        # search for all address pointers
+        address_pointers = {}
+        for index, instruction in enumerate(self.instructions):
+            # skip all non-tags
+            if not isinstance(instruction, Tag):
+                continue
+            address_pointers[instruction.value] = index
+
+        # replace all address pointer tags references
+        idx = 0
+        while idx < len(self.instructions):
+            instruction = self.instructions[idx]
+            idx += 1
+
+            # delete hanging address pointers
+            if isinstance(instruction, Tag):
+                idx -= 1
+                self.instructions.pop(idx)
+
         # go through TaggedInstructions and replace references to 'subroutine_scope' with addresses
         # from 'locations' table
         for instruction in self.instructions:
-            if instruction.value.value in locations:
-                instruction.value.value = locations[instruction.value.value]
+            # make subroutine pointers
+            if instruction.value.value in subroutine_pointers:
+                instruction.value.value = subroutine_pointers[instruction.value.value]
+                instruction.flag = False
+
+            # make address pointers
+            elif instruction.value.value in address_pointers:
+                instruction.value.value = address_pointers[instruction.value.value]
                 instruction.flag = False
             # 2 - store or SRA instructions for Quantum CPU's
             if self.code_namespace.definitions[instruction.opcode.value].opcode == 2:

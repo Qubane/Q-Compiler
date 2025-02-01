@@ -38,6 +38,11 @@ load 50
 push
 call test_sub
 
+jump @test
+
+; test of address pointer
+@test
+
 ; halt the computation
 halt
 
