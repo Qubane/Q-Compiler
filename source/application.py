@@ -42,6 +42,10 @@ class Application:
                             help="code namespace",
                             choices=["QT", "QM"],
                             default="QT")
+        parser.add_argument("--live",
+                            help="compiles the file every 100 ms",
+                            action="store_true",
+                            default=False)
 
         self.args = parser.parse_args()
 
