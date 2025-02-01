@@ -213,10 +213,15 @@ class Compiler:
             instruction = self.instructions[idx]
             idx += 1
 
-            # delete hanging address pointers
+            # delete hanging address pointers & correct pointers being offset
             if isinstance(instruction, Tag):
                 idx -= 1
                 self.instructions.pop(idx)
+
+                # correct pointers
+                for pointer_name, pointer_address in address_pointers.items():
+                    if pointer_address > idx:
+                        address_pointers[pointer_name] = pointer_address - 1
 
         # go through TaggedInstructions and replace references to 'subroutine_scope' with addresses
         # from 'locations' table
