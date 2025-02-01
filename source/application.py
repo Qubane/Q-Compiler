@@ -122,7 +122,10 @@ class Application:
         # compile
         while True:
             # compile input
-            self.compile_input()
+            try:
+                self.compile_input()
+            except CompilerError as err:
+                print(f"\x1b[31m{err}; line: {err.line}")
 
             # if live updates are turned off -> break
             if not self.args.live:
