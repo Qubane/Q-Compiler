@@ -121,20 +121,22 @@ class Application:
 
         # compile
         while True:
+            # clear screen
+            if os.name == "nt":  # windows
+                os.system("cls")
+            else:  # unix
+                os.system("clear")
+            print("\x1b[0m", end="")
+
             # compile input
             try:
                 self.compile_input()
             except CompilerError as err:
-                print(f"\x1b[31m{err}; line: {err.line}")
+                print(f"\x1b[31m{err}; line: {err.line}", end="", flush=True)
 
             # if live updates are turned off -> break
             if not self.args.live:
                 break
 
-            # wait and clear
+            # wait
             sleep(0.25)
-            # print("\x1b[2J", end="\n", flush=True)  # doesn't always work / works not as indented
-            if os.name == "nt":  # windows
-                os.system("cls")
-            else:  # unix
-                os.system("clear")
