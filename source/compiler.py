@@ -32,7 +32,7 @@ class Compiler:
 
         self.current_scope = scope
 
-    def _generate_macro_scope(self, index: int, name: str, args: list[Tag]):
+    def _generate_macro_scope(self, name: str, args: list[Tag]):
         """
         Insert a macro at a given index
         """
@@ -137,7 +137,7 @@ class Compiler:
 
             # macros
             elif word[0].type is TagType.POINTER and word[0].value in self.macros:
-                scope = self._generate_macro_scope(0, word[0].value, word[2:])  # generate factored macro scope
+                scope = self._generate_macro_scope(word[0].value, word[2:])  # generate factored macro scope
                 for word in scope[::-1]:  # insert into 'to be processed' scope part
                     self.current_scope.insert(0, word)
 
