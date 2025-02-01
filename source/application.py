@@ -3,13 +3,15 @@ Sticks all code together
 """
 
 
+import os
+from time import sleep
 from argparse import ArgumentParser, Namespace
 from source.classes import *
 from source.lexer import Lexer
 from source.file_io import dump
 from source.parser import Parser
 from source.compiler import Compiler
-from source.built_ins import NamespaceQMr11, NamespaceQT
+from source.built_ins import NamespaceQMr11, NamespaceQT, CodeNamespace
 
 
 class Application:
@@ -19,6 +21,7 @@ class Application:
 
     def __init__(self):
         self.args: Namespace | None = None
+        self.code_namespace: CodeNamespace | None = None
 
     def parse_args(self) -> None:
         """
@@ -43,11 +46,63 @@ class Application:
                             choices=["QT", "QM"],
                             default="QT")
         parser.add_argument("--live",
-                            help="compiles the file every 100 ms",
+                            help="compiles the file every 250 ms",
                             action="store_true",
                             default=False)
 
         self.args = parser.parse_args()
+
+    def compile_input(self):
+        """
+        Compiles file
+        """
+
+        # read file
+        with open(self.args.input, "r", encoding="ascii") as file:
+            code = file.read()
+
+        # Lexing stage
+        lexer = Lexer()
+        lexer.code_namespace = self.code_namespace
+        lexer.import_code(code)
+        lexer.evaluate()
+
+        # Parsing stage
+        parser = Parser()
+        parser.import_scope(lexer.current_scope)
+        parser.parse()
+
+        # Compilation stage
+        compiler = Compiler()
+        compiler.code_namespace = self.code_namespace
+        compiler.import_scope(parser.current_scope)
+        compiler.compile()
+
+        for idx, instruction in enumerate(compiler.bytecode):
+            # line index
+            print(f"{idx:04x}    ", end="")
+
+            # instruction bytecode
+            if isinstance(self.code_namespace, NamespaceQT):
+                print(f"{'1' if instruction.flag else '0'} {instruction.value:04X} {instruction.opcode:02X}    ",
+                      end="")
+            elif isinstance(self.code_namespace, NamespaceQMr11):
+                print(f"{'1' if instruction.flag else '0'} {instruction.value:02X} {instruction.opcode:02X}    ",
+                      end="")
+
+            # instruction name
+            print(f"{compiler.instructions[idx].opcode.value: <7}", end="")
+
+            # instruction value
+            if instruction.value:  # if value is above zero
+                print(f"0x{instruction.value:02X}   # {instruction.value}")
+            else:
+                print()
+
+        # check output argument, and dump to file
+        if self.args.output:
+            bytes_written = dump(compiler.bytecode, self.args.output, self.code_namespace)
+            print(f"\n{bytes_written} bytes written to '{self.args.output}'")
 
     def run(self) -> None:
         """
@@ -60,63 +115,23 @@ class Application:
         # used namespace
         match self.args.namespace:
             case "QM":
-                namespace = NamespaceQMr11()
+                self.code_namespace = NamespaceQMr11()
             case _:
-                namespace = NamespaceQT()
+                self.code_namespace = NamespaceQT()
 
-        # input file
-        with open(self.args.input, "r", encoding="ascii") as file:
-            code = file.read()
+        # compile
+        while True:
+            # compile input
+            self.compile_input()
 
-        # Lexing stage
-        lexer = Lexer()
-        lexer.code_namespace = namespace
-        lexer.import_code(code)
-        lexer.evaluate()
+            # if live updates are turned off -> break
+            if not self.args.live:
+                break
 
-        print("[LEXER STAGE START]")
-        recursive_scope_print(lexer.current_scope)
-        print("[LEXER STAGE END]\n")
-
-        # Parsing stage
-        parser = Parser()
-        parser.import_scope(lexer.current_scope)
-        parser.parse()
-
-        print("[PARSER STAGE START]")
-        recursive_scope_print(parser.current_scope)
-        print("[PARSER STAGE END]\n")
-
-        # Compilation stage
-        compiler = Compiler()
-        compiler.code_namespace = namespace
-        compiler.import_scope(parser.current_scope)
-        compiler.compile()
-
-        print("[COMPILER STAGE START]")
-        for idx, instruction in enumerate(compiler.bytecode):
-            # line index
-            print(f"{idx:04x}    ", end="")
-
-            # instruction bytecode
-            if isinstance(namespace, NamespaceQT):
-                print(f"{'1' if instruction.flag else '0'} {instruction.value:04X} {instruction.opcode:02X}    ",
-                      end="")
-            elif isinstance(namespace, NamespaceQMr11):
-                print(f"{'1' if instruction.flag else '0'} {instruction.value:02X} {instruction.opcode:02X}    ",
-                      end="")
-
-            # instruction name
-            print(f"{compiler.instructions[idx].opcode.value: <7}", end="")
-
-            # instruction value
-            if instruction.value:  # if value is above zero
-                print(f"0x{instruction.value:02X}   # {instruction.value}")
-            else:
-                print()
-        print("[COMPILER STAGE END]", end="\n\n")
-
-        # check output argument, and dump to file
-        if self.args.output:
-            bytes_written = dump(compiler.bytecode, self.args.output, namespace)
-            print(f"{bytes_written} bytes written to '{self.args.output}'")
+            # wait and clear
+            sleep(0.25)
+            # print("\x1b[2J", end="\n", flush=True)  # doesn't always work / works not as indented
+            if os.name == "nt":  # windows
+                os.system("cls")
+            else:  # unix
+                os.system("clear")
