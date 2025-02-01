@@ -33,6 +33,19 @@ class Compiler:
 
         self.current_scope = scope
 
+    def import_data(self, **kwargs):
+        """
+        Imports compiler data.
+        Used during recursive compilation step
+        """
+
+        self.pointers: dict[str, Tag] = kwargs.get("pointers", dict())
+        self.address_pointers: dict[str, Tag] = kwargs.get("address_pointers", dict())
+        self.pointer_counter: int = kwargs.get("pointer_counter", -1)
+
+        self.macros: dict[str, Scope] = kwargs.get("macros", dict())
+        self.subroutines: dict[str, Scope] = kwargs.get("subroutines", dict())
+
     def _generate_macro_scope(self, name: str, args: list[Tag]):
         """
         Insert a macro at a given index
@@ -159,7 +172,7 @@ class Compiler:
 
         Inserts subroutines at the end of the 'self.current_scope'.
         Grants proper address pointers to operations that reference subroutines.
-        TODO: recursively compiles subroutine code
+        Recursively compiles subroutine code
         Sets memory flag to False for subroutine calls and store instructions
         """
 
@@ -172,7 +185,19 @@ class Compiler:
             subroutine_pointers[subroutine_name] = len(self.instructions)
             for word in scope[1]:
                 self.current_scope.add(word)
-            self._compile_second_stage()
+
+            # recursively compile subroutines
+            new_compiler = Compiler()
+            new_compiler.import_scope(self.current_scope)
+            new_compiler.import_data(
+                pointers=self.pointers,
+                address_pointers=self.address_pointers,
+                pointer_counter=self.pointer_counter,
+                macros=self.macros)
+            new_compiler.compile()
+
+            # carry compiled instructions
+            self.instructions += new_compiler.instructions
 
         # search for all address pointers
         address_pointers = {}
