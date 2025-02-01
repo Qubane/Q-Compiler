@@ -33,10 +33,15 @@ class Parser:
             word: Word  # help type hinting
 
             # check 'macro' and 'subr' keywords
-            if word[0].value in ["macro", "subr"] and word[1].type is not TagType.POINTER:
-                raise CompilerSyntaxError(
-                    f"built-in '{word[0].value}' followed by a non-pointer argument",
-                    line=word.line)
+            if word[0].value in ["macro", "subr"]:
+                if len(word) < 2:
+                    raise CompilerSyntaxError(
+                        f"built-in '{word[0].value}' without name defined",
+                        line=word.line)
+                elif word[1].type is not TagType.POINTER:
+                    raise CompilerSyntaxError(
+                        f"built-in '{word[0].value}' followed by a non-pointer argument",
+                        line=word.line)
 
     def _parse_second_stage(self):
         """
