@@ -111,10 +111,10 @@ class NamespaceQMr11(CodeNamespace):
         "INT": Definition(TagType.BUILT_IN, 126),
         "HALT": Definition(TagType.BUILT_IN, 127),
     }
-    variable_making: list[str] = {
+    variable_making: list[str] = [
         "SRA",
         "SRP",
-    }
+    ]
     stack_operations: dict[str, str] = {
         "push": "PUSH",
         "pop": "POP",
@@ -163,10 +163,10 @@ class NamespaceQT(CodeNamespace):
         "int": Definition(TagType.BUILT_IN, 126),
         "halt": Definition(TagType.BUILT_IN, 127),
     }
-    variable_making: list[str] = {
+    variable_making: list[str] = [
         "store",
         "storep",
-    }
+    ]
     stack_operations: dict[str, str] = {
         "push": "push",
         "pop": "pop",
