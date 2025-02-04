@@ -137,13 +137,12 @@ class Application:
                 os.system("cls")
             else:  # unix
                 os.system("clear")
-            print("\x1b[0m", end="")
 
             # compile input
             try:
                 self.compile_input()
             except CompilerError as err:
-                print(f"\x1b[31m{err}; line: {err.line}", end="", flush=True)
+                LOGGER.error(f"Error on line: {err.line}", exc_info=err)
 
             # if live updates are turned off -> break
             if not self.args.live:
