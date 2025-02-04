@@ -30,7 +30,7 @@ class CodeNamespace(DefineNamespace):
     """
 
     instruction_class = InstructionN
-    variable_making: set[str]
+    variable_making: list[str]
     stack_operations: dict[str, str]
 
 
@@ -111,7 +111,7 @@ class NamespaceQMr11(CodeNamespace):
         "INT": Definition(TagType.BUILT_IN, 126),
         "HALT": Definition(TagType.BUILT_IN, 127),
     }
-    variable_making: set[str] = {
+    variable_making: list[str] = {
         "SRA",
         "SRP",
     }
@@ -163,7 +163,7 @@ class NamespaceQT(CodeNamespace):
         "int": Definition(TagType.BUILT_IN, 126),
         "halt": Definition(TagType.BUILT_IN, 127),
     }
-    variable_making: set[str] = {
+    variable_making: list[str] = {
         "store",
         "storep",
     }
