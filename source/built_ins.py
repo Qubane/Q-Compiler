@@ -109,6 +109,10 @@ class NamespaceQMr11(CodeNamespace):
         "INT": Definition(TagType.BUILT_IN, 126),
         "HALT": Definition(TagType.BUILT_IN, 127),
     }
+    variable_making: set[str] = {
+        "SRA",
+        "SRP",
+    }
 
 
 class NamespaceQT(CodeNamespace):
@@ -152,4 +156,8 @@ class NamespaceQT(CodeNamespace):
         "portr": Definition(TagType.BUILT_IN, 97),
         "int": Definition(TagType.BUILT_IN, 126),
         "halt": Definition(TagType.BUILT_IN, 127),
+    }
+    variable_making: set[str] = {
+        "store",
+        "storep",
     }
