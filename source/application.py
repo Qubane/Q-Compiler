@@ -4,6 +4,7 @@ Sticks all code together
 
 
 import os
+import logging
 from time import sleep
 from argparse import ArgumentParser, Namespace
 from source.classes import *
@@ -12,6 +13,9 @@ from source.file_io import dump
 from source.parser import Parser
 from source.compiler import Compiler
 from source.built_ins import NamespaceQMr11, NamespaceQT, CodeNamespace
+
+
+LOGGER = logging.getLogger()
 
 
 class Application:
@@ -37,10 +41,10 @@ class Application:
                             required=True)
         parser.add_argument("-o", "--output",
                             help="compiled bytecode output")
-        # parser.add_argument("-v", "--verbose",
-        #                     help="verbose output",
-        #                     action="store_true",
-        #                     default=False)
+        parser.add_argument("-v", "--verbose",
+                            help="verbose output",
+                            action="store_true",
+                            default=False)
         parser.add_argument("--namespace",
                             help="code namespace",
                             choices=["QT", "QM"],
@@ -80,32 +84,29 @@ class Application:
 
         for idx, instruction in enumerate(compiler.bytecode):
             # line index
-            print(f"{idx:04x}    ", end="")
+            output = f"{idx:04X}    "
 
             # instruction bytecode
             if isinstance(self.code_namespace, NamespaceQT):
-                print(f"{'1' if instruction.flag else '0'} {instruction.value:04X} {instruction.opcode:02X}    ",
-                      end="")
+                output += f"{'1' if instruction.flag else '0'} {instruction.value:04X} {instruction.opcode:02X}    "
             elif isinstance(self.code_namespace, NamespaceQMr11):
-                print(f"{'1' if instruction.flag else '0'} {instruction.value:02X} {instruction.opcode:02X}    ",
-                      end="")
+                output += f"{'1' if instruction.flag else '0'} {instruction.value:02X} {instruction.opcode:02X}    "
 
             # instruction name
-            print(f"{compiler.instructions[idx].opcode.value: <7}", end="")
+            output += f"{compiler.instructions[idx].opcode.value: <7}"
 
             # instruction value
             if instruction.value:  # if value is above zero
                 if isinstance(self.code_namespace, NamespaceQT):
-                    print(f"0x{instruction.value:04X}   # {instruction.value}")
+                    output += f"0x{instruction.value:04X}   # {instruction.value}"
                 elif isinstance(self.code_namespace, NamespaceQMr11):
-                    print(f"0x{instruction.value:02X}   # {instruction.value}")
-            else:
-                print()
+                    output += f"0x{instruction.value:02X}   # {instruction.value}"
+            LOGGER.info(output)
 
         # check output argument, and dump to file
         if self.args.output:
             bytes_written = dump(compiler.bytecode, self.args.output, self.code_namespace)
-            print(f"\n{bytes_written} bytes written to '{self.args.output}'")
+            LOGGER.info(f"{bytes_written} bytes written to '{self.args.output}'")
 
     def run(self) -> None:
         """
@@ -114,6 +115,13 @@ class Application:
 
         # parse arguments
         self.parse_args()
+
+        # setup logging
+        kwargs = {"style": "{", "format": "{levelname}:{name}: {message}"}
+        if self.args.verbose:
+            logging.basicConfig(**kwargs, level=logging.INFO)
+        else:
+            logging.basicConfig(**kwargs)
 
         # used namespace
         match self.args.namespace:
