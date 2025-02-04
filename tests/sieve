@@ -1,0 +1,5 @@
+; sieve of Eratosthenes
+
+; constants
+load 256
+store ARRAY_SIZE
