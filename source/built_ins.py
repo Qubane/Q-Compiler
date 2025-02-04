@@ -30,6 +30,7 @@ class CodeNamespace(DefineNamespace):
     """
 
     instruction_class = InstructionN
+    variable_making: set[str]
 
 
 class NamespaceGeneral(DefineNamespace):
