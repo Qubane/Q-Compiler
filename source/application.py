@@ -117,11 +117,11 @@ class Application:
         self.parse_args()
 
         # setup logging
-        kwargs = {"style": "{", "format": "{levelname}:{name}: {message}"}
+        kwargs = {"style": "{", "format": "{levelname}: {message}"}
         if self.args.verbose:
-            logging.basicConfig(**kwargs, level=logging.INFO)
+            logging.basicConfig(**kwargs, level=logging.DEBUG)
         else:
-            logging.basicConfig(**kwargs)
+            logging.basicConfig(**kwargs, level=logging.INFO)
 
         # used namespace
         match self.args.namespace:
