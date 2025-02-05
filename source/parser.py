@@ -55,6 +55,12 @@ class Parser:
             idx += 1
             word: Word = self.current_scope[idx]
 
+            # get rid of zero-length words
+            if len(word) == 0:
+                self.current_scope.pop(idx)
+                idx -= 1
+                continue
+
             # create macro and subroutine scopes
             if word[0].value in ["macro", "subr"]:
                 # check for correct indent after the keyword
