@@ -93,10 +93,10 @@ class Application:
                 output += f"{'1' if instruction.flag else '0'} {instruction.value:02X} {instruction.opcode:02X}    "
 
             # instruction name
-            output += f"{compiler.instructions[idx].opcode.value: <7}"
+            output += f"{compiler.instructions[idx].opcode.value: <8}"
 
             # instruction value
-            if instruction.value:  # if value is above zero
+            if instruction.value or instruction.flag:  # if value is above zero, or it's a memory address
                 if isinstance(self.code_namespace, NamespaceQT):
                     output += f"0x{instruction.value:04X}   # {instruction.value}"
                 elif isinstance(self.code_namespace, NamespaceQMr11):
