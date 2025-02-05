@@ -197,6 +197,7 @@ class Compiler:
                 scope = self._generate_macro_scope(word[0].value, word[2:])  # generate factored macro scope
                 for word in scope[::-1]:  # insert into 'to be processed' scope part
                     self.current_scope.insert(0, word)
+                self._compile_first_stage()
 
             # address pointers
             elif word[0].type is TagType.POINTER and word[0].value in self.address_pointers:
