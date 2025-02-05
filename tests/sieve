@@ -2,4 +2,23 @@
 
 ; constants
 load 256
-store ARRAY_SIZE
+add 2
+store $ARRAY_SIZE
+
+; make array
+load 2
+store $array_pointer
+
+@make_arr_loop
+load $array_pointer         ; load array_pointer into ACC
+loadpr $array_pointer       ; load array_pointer into PR
+storep                      ; store 0 to address defined by array_pointer
+inc                         ; increment
+store $array_pointer        ; store array_pointer
+comp $ARRAY_SIZE            ; compare ACC with ARRAY_SIZE
+loadpr @exit_arr_loop       ; load @make_arr_loop to PR
+jumpc 0b0000_0000_0000_0100 ; if carry -> exit loop
+jump @make_arr_loop         ; loop around
+@exit_arr_loop
+
+halt
