@@ -87,17 +87,6 @@ class Lexer:
                     tag.type = GeneralNamespace.definitions[tag.value].type
                 elif tag.value in self.code_namespace.definitions:
                     tag.type = self.code_namespace.definitions[tag.value].type
-                elif tag.value.isnumeric():  # simple decimal numbers
-                    tag.type = TagType.NUMBER
-                    tag.value = int(tag.value)
-                elif tag.value[:2] in NamespaceGeneral.number_prefixes:  # non decimal numbers
-                    tag.type = TagType.NUMBER
-                    try:
-                        tag.value = int(tag.value[2:], NamespaceGeneral.number_prefixes[tag.value[:2]])
-                    except ValueError:
-                        raise CompilerValueError(
-                            "Unable to convert number",
-                            line=word.line)
                 else:
                     tag.type = TagType.POINTER
 

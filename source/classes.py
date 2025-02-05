@@ -14,7 +14,6 @@ class TagType(StrEnum):
     INTERNAL = "internal"
     BUILT_IN = "built-in"
     POINTER = "pointer"
-    NUMBER = "number"
 
     def __repr__(self):
         return self.value
