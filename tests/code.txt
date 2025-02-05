@@ -1,8 +1,8 @@
 ; test of global scope
 load 10
 add 59
-store A
-store B
+store $A
+store $B
 
 ; test of number types
 load 0b10011001     ; number in binary form
@@ -10,9 +10,13 @@ load 0xfe           ; number in hexadecimal form
 load 39             ; number in decimal form
 
 ; test stored variables
-load A
-mul B
-store AB
+load $A
+mul $B
+store $AB
+
+; test pointers
+load B      ; should load 1 into ACC
+load $B     ; should load B into acc
 
 ; test of macro
 macro test_macro uses x1 x2 x3
@@ -23,9 +27,9 @@ macro test_macro uses x1 x2 x3
 ; test of subroutine
 subr test_sub
     pop         ; pop last val from stack
-    store t     ; store in temp variable
+    store $t    ; store in temp variable
     pop         ; pop another val from stack
-    add t       ; add temp variable to value from stack
+    add $t      ; add temp variable to value from stack
     return      ; returns back
 
 ; insert code of test_macro with given numbers

@@ -133,8 +133,35 @@ class Compiler:
 
             # instructions with arguments
             if word[0].value in self.code_namespace.definitions and len(word) == 2:
-                memory_flag = word[1].type is TagType.POINTER
-                if memory_flag:  # it's a pointer
+                # check if it's a pointer
+                is_pointer = word[1].value[0] == "$"
+                value: str = word[1].value[1:] if is_pointer else word[1].value
+
+                # check if it's numeric
+                is_numeric = True
+                if value.isnumeric():  # simple numeric
+                    pass
+                elif value[:2] in GeneralNamespace.number_prefixes:  # prefixed numeric
+                    # try converting prefixed to just decimal
+                    converted = None
+                    try:
+                        converted = int(value[2:], GeneralNamespace.number_prefixes[value[:2]])
+                    except ValueError:
+                        pass
+
+                    # if number wasn't converted -> error occurred -> reraise it as CompilerError
+                    if converted is None:
+                        raise CompilerValueError(f"Unable to convert numeric value '{value}'", line=word.line)
+
+                    # that may be a bit confusing to do it here
+                    word[1].value = f"{'$' if is_pointer else ''}{converted}"
+                elif value[0].isdigit():  # raise error if first character is a digit
+                    raise CompilerValueError(f"Unable to convert numeric value '{value}'", line=word.line)
+                else:  # it's a variable pointer
+                    is_numeric = False
+
+                # a non numeric value
+                if not is_numeric:
                     if word[1].value in self.pointers:  # pointer value was already defined
                         instruction_value = replace(self.pointers[word[1].value])
                     elif (word[1].value in self.subroutines or
@@ -149,10 +176,12 @@ class Compiler:
                         self.pointer_counter += 1
                         self.pointers[word[1].value] = Tag(self.pointer_counter, TagType.POINTER)
                         instruction_value = self.pointers[word[1].value]
-                else:  # it's a number
+
+                # a numeric value
+                else:
                     instruction_value = replace(word[1])
                 self.instructions.append(TaggedInstruction(
-                    flag=memory_flag,
+                    flag=is_pointer,
                     value=instruction_value,
                     opcode=word[0]))
 
@@ -160,7 +189,7 @@ class Compiler:
             elif word[0].value in self.code_namespace.definitions and len(word) == 1:
                 self.instructions.append(TaggedInstruction(
                     flag=False,
-                    value=Tag(0, TagType.NUMBER),
+                    value=Tag(0, TagType.INTERNAL),
                     opcode=word[0]))
 
             # macros
