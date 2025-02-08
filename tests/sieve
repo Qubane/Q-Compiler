@@ -1,11 +1,11 @@
 ; sieve of Eratosthenes
 
 ; constants
-load 256
+load 2048
 store $SIEVE_SIZE
 store $offset
 
-load 1024
+load 128
 store $ARRAY_START
 
 ; fill the array with numbers
