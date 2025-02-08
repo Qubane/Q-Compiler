@@ -25,6 +25,7 @@ jumpc 0b00_1000                 ; if ACC < 2 then exit
 jump @make_array_loop           ; else loop back
 @exit_make_array_loop
 
+
 ; sieve numbers
 load 2          ; load 2
 store $idx      ; store idx
@@ -55,5 +56,46 @@ store $offset       ; store offset
 comp $SIEVE_SIZE    ; compare offset and sieve_size
 loadpr @sieve_loop
 jumpc 0b00_1000     ; if offset < sieve_size then continue the loop
+
+
+; "compress" the array
+load 0
+store $idx
+store $offset
+
+subr append_to_list
+    load $idx           ; load index
+    add $ARRAY_START    ; add array_start
+    tapr                ; make pointer
+    pop                 ; pop from stack
+    storep              ; store value at index
+
+    load $idx   ; load index
+    inc         ; increment
+    store $idx  ; store index
+
+    return              ; else return
+
+@compress_loop
+load $offset        ; load offset
+add $ARRAY_START    ; add array_start
+loadp               ; load value at offset
+store $value        ; store value
+
+loadpr @compress_loop_skipped
+jumpc 0b00_0100 ; if value is zero then skip call
+
+load $value         ; load value
+push                ; push to stack
+call append_to_list ; call append to list
+
+@compress_loop_skipped
+load $offset    ; load offset
+inc             ; increment
+store $offset   ; store offset
+
+comp $SIEVE_SIZE    ; compare offset with sieve_size
+loadpr @compress_loop
+jumpc 0b00_1000     ; if offset < sieve_size then loop back
 
 halt
