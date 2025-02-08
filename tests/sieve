@@ -12,15 +12,48 @@ store $ARRAY_START
 @make_array_loop
 load $ARRAY_START               ; load array start
 add $offset                     ; add offset
+sub 2                           ; offset array by 2 indexes
 tapr                            ; transfer ACC to PR
 load $offset                    ; load offset
 storep                          ; store offset at address PR in cache
 dec                             ; decrement 1 from offset
 store $offset                   ; store offset
 comp 2                          ; compare ACC with 2
+
 loadpr @exit_make_array_loop    ; load pointer
 jumpc 0b00_1000                 ; if ACC < 2 then exit
 jump @make_array_loop           ; else loop back
 @exit_make_array_loop
+
+; sieve numbers
+load 2          ; load 2
+store $idx      ; store idx
+store $offset   ; store offset
+
+@sieve_loop
+load $ARRAY_START   ; load array start
+add $offset         ; add offset
+tapr                ; make pointer
+load 0              ; load 0
+storep              ; store 0 at pointer
+
+load $offset        ; load offset
+add $idx            ; add index
+store $offset       ; store offset
+
+comp $SIEVE_SIZE    ; compare offset and sieve_size
+loadpr @sieve_loop
+jumpc 0b00_1000     ; if offset < sieve_size then continue the loop
+
+load $idx           ; load index
+inc                 ; increment
+store $idx          ; store index
+lsl 1               ; double it
+sub 2               ; shift by 2
+store $offset       ; store offset
+
+comp $SIEVE_SIZE    ; compare offset and sieve_size
+loadpr @sieve_loop
+jumpc 0b00_1000     ; if offset < sieve_size then continue the loop
 
 halt
