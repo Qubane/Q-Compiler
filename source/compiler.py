@@ -213,29 +213,6 @@ class Compiler:
         Sets memory flag to False for subroutine calls and store instructions
         """
 
-        # subroutine name -> address table
-        subroutine_pointers = {}
-
-        # insert subroutines at the end of the instruction list
-        for subroutine_name, subroutine_scope in self.subroutines.items():
-            scope = subroutine_scope.__copy__()
-            subroutine_pointers[subroutine_name] = len(self.instructions)
-            for word in scope[1]:
-                self.current_scope.add(word)
-
-            # recursively compile subroutines
-            new_compiler = Compiler()
-            new_compiler.import_scope(self.current_scope)
-            new_compiler.import_data(
-                pointers=self.pointers,
-                address_pointers=self.address_pointers,
-                pointer_counter=self.pointer_counter,
-                macros=self.macros)
-            new_compiler.compile()
-
-            # carry compiled instructions
-            self.instructions += new_compiler.instructions
-
         # search for all address pointers
         address_pointers = {}
         for index, instruction in enumerate(self.instructions):
@@ -259,6 +236,29 @@ class Compiler:
                 for pointer_name, pointer_address in address_pointers.items():
                     if pointer_address > idx:
                         address_pointers[pointer_name] = pointer_address - 1
+
+        # subroutine name -> address table
+        subroutine_pointers = {}
+
+        # insert subroutines at the end of the instruction list
+        for subroutine_name, subroutine_scope in self.subroutines.items():
+            scope = subroutine_scope.__copy__()
+            subroutine_pointers[subroutine_name] = len(self.instructions)
+            for word in scope[1]:
+                self.current_scope.add(word)
+
+            # recursively compile subroutines
+            new_compiler = Compiler()
+            new_compiler.import_scope(self.current_scope)
+            new_compiler.import_data(
+                pointers=self.pointers,
+                address_pointers=self.address_pointers,
+                pointer_counter=self.pointer_counter,
+                macros=self.macros)
+            new_compiler.compile()
+
+            # carry compiled instructions
+            self.instructions += new_compiler.instructions
 
         # go through TaggedInstructions and replace references to 'subroutine_scope' with addresses
         # from 'locations' table
