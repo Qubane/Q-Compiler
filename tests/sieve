@@ -3,9 +3,24 @@
 ; constants
 load 256
 store $SIEVE_SIZE
+store $offset
 
 load 1024
-store $ARRAY_PTR
+store $ARRAY_START
 
+; fill the array with numbers
+@make_array_loop
+load $ARRAY_START               ; load array start
+add $offset                     ; add offset
+tapr                            ; transfer ACC to PR
+load $offset                    ; load offset
+storep                          ; store offset at address PR in cache
+dec                             ; decrement 1 from offset
+store $offset                   ; store offset
+comp 2                          ; compare ACC with 2
+loadpr @exit_make_array_loop    ; load pointer
+jumpc 0b00_1000                 ; if ACC < 2 then exit
+jump @make_array_loop           ; else loop back
+@exit_make_array_loop
 
 halt
