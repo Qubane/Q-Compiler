@@ -1,29 +1,44 @@
 ; sieve of Eratosthenes
 
+
 ; constants
-load 2048
+load 256
 store $SIEVE_SIZE
 store $offset
 
 load 128
 store $ARRAY_START
 
-; fill the array with numbers
-@make_array_loop
-load $ARRAY_START               ; load array start
-add $offset                     ; add offset
-sub 2                           ; offset array by 2 indexes
-tapr                            ; transfer ACC to PR
-load $offset                    ; load offset
-storep                          ; store offset at address PR in cache
-dec                             ; decrement 1 from offset
-store $offset                   ; store offset
-comp 2                          ; compare ACC with 2
 
-loadpr @exit_make_array_loop    ; load pointer
-jumpc 0b00_1000                 ; if ACC < 2 then exit
-jump @make_array_loop           ; else loop back
-@exit_make_array_loop
+; subroutines
+subr append_to_list
+    load $idx           ; load index
+    add $ARRAY_START    ; add array_start
+    tapr                ; make pointer
+    pop                 ; pop from stack
+    storep              ; store value at index
+
+    load $idx   ; load index
+    inc         ; increment
+    store $idx  ; store index
+
+    return              ; else return
+
+
+; fill the array with numbers
+load 0      ; load 0
+store $idx  ; store index
+
+@make_array_loop
+load $idx               ; load index
+add 2                   ; add 2
+push                    ; push to stack
+call append_to_list     ; append value to stack
+load $idx               ; load index
+comp $SIEVE_SIZE        ; compare with size
+
+loadpr @make_array_loop
+jumpc 0b00_1000         ; if index < SIEVE_SIZE then loop back
 
 
 ; sieve numbers
@@ -62,19 +77,6 @@ jumpc 0b00_1000     ; if offset < sieve_size then continue the loop
 load 0
 store $idx
 store $offset
-
-subr append_to_list
-    load $idx           ; load index
-    add $ARRAY_START    ; add array_start
-    tapr                ; make pointer
-    pop                 ; pop from stack
-    storep              ; store value at index
-
-    load $idx   ; load index
-    inc         ; increment
-    store $idx  ; store index
-
-    return              ; else return
 
 @compress_loop
 load $offset        ; load offset
