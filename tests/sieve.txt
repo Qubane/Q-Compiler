@@ -100,4 +100,5 @@ comp $SIEVE_SIZE    ; compare offset with sieve_size
 loadpr @compress_loop
 jumpc 0b00_1000     ; if offset < sieve_size then loop back
 
+
 halt
