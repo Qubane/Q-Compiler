@@ -142,7 +142,7 @@ class Application:
             try:
                 self.compile_input()
             except CompilerError as err:
-                LOGGER.error(f"Error on line: {err.line}", exc_info=err)
+                LOGGER.error(f"Error {err} on line: {err.line}")
 
             # if live updates are turned off -> break
             if not self.args.live:
