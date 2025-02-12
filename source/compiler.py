@@ -172,7 +172,8 @@ class Compiler:
                         raise CompilerNotImplementedError(line=word.line)
                     else:  # define pointer as generic integer
                         if word[0].value not in self.code_namespace.variable_making:
-                            LOGGER.warning(f"Accessing undefined variable; line: {word.line}")
+                            raise CompilerNameError(f"Accessing undefined variable '{word[0].value}'",
+                                                    line=word.line)
                         self.pointer_counter += 1
                         self.pointers[word[1].value] = Tag(self.pointer_counter, TagType.POINTER)
                         instruction_value = self.pointers[word[1].value]
