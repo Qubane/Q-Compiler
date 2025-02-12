@@ -19,6 +19,12 @@ class CompilerSyntaxError(CompilerError):
     """
 
 
+class CompilerNameError(CompilerError):
+    """
+    Name error called by compiler
+    """
+
+
 class CompilerValueError(CompilerError):
     """
     Error when converting NUMBER tag to true int
