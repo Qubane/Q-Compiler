@@ -80,10 +80,6 @@ class Parser:
                         break
                     word_.pop(0)
                     scope.add(self.current_scope.pop(idx))
-                # recursively parse scopes to make AST (Abstract Syntax Tree)
-                new_parser = Parser()
-                new_parser.import_scope(scope)
-                new_parser.partial_parse()
 
                 # insert back into current scope
                 self.current_scope.insert(idx, scope)

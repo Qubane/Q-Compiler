@@ -246,19 +246,7 @@ class Compiler:
             subroutine_pointers[subroutine_name] = len(self.instructions)
             for word in scope[1]:
                 self.current_scope.add(word)
-
-            # recursively compile subroutines
-            new_compiler = Compiler()
-            new_compiler.import_scope(self.current_scope)
-            new_compiler.import_data(
-                pointers=self.pointers,
-                address_pointers=self.address_pointers,
-                pointer_counter=self.pointer_counter,
-                macros=self.macros)
-            new_compiler.compile()
-
-            # carry compiled instructions
-            self.instructions += new_compiler.instructions
+            self._compile_second_stage()
 
         # go through TaggedInstructions and replace references to 'subroutine_scope' with addresses
         # from 'locations' table
