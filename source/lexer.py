@@ -48,21 +48,12 @@ class Lexer:
         buffer = ""
         word = Word()
 
-        is_commented = False
-
         for char in self.raw_code:
-            if char == "\n":
-                is_commented = False
-            if is_commented:
-                continue
-
             if char == " ":  # tag separator
                 if buffer:
                     word.tags.append(Tag(buffer))
                     buffer = ""
-            elif char == "\n" or char == "\t" or char == ";":  # special characters
-                if char == ";":  # comments
-                    is_commented = True
+            elif char == "\n" or char == "\t":  # special characters
                 if buffer:  # append last tag from buffer
                     word.add(Tag(buffer))
                 if len(word.tags) > 0:  # make and append the word
