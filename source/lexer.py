@@ -24,7 +24,14 @@ class Lexer:
         :param code: code string
         """
 
-        self.raw_code = code.replace(f"\n{' ' * 4}", "\n\t")
+        self.raw_code = ""
+        for line in code.split("\n"):
+            line = line.replace("\r", "")  # delete carriage return
+            code_line = line.split(";")[0].rstrip(" ")  # split by comment ';', strip spaces of the right
+
+            # add any code that is present
+            code_line = code_line.replace(" " * 4, "\t")  # replace 4 spaces with \t
+            self.raw_code += code_line + "\n"  # append line
 
     def _eval_first_stage(self):
         """
