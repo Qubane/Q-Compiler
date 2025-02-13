@@ -208,10 +208,7 @@ class Compiler:
         """
         Third internal compilation stage.
 
-        Inserts subroutines at the end of the 'self.current_scope'.
-        Grants proper address pointers to operations that reference subroutines.
-        Recursively compiles subroutine code
-        Sets memory flag to False for subroutine calls and store instructions
+        Generates address pointers and inserts them at correct places
         """
 
         # search for all address pointers
@@ -238,6 +235,20 @@ class Compiler:
                     if pointer_address > idx:
                         address_pointers[pointer_name] = pointer_address - 1
 
+        for instruction in self.instructions:
+            # make address pointers
+            if instruction.value.value in address_pointers:
+                instruction.value.value = address_pointers[instruction.value.value]
+                instruction.flag = False
+
+    def _compile_forth_stage(self):
+        """
+        Third internal compilation stage.
+
+        Inserts subroutines at the end of the 'self.current_scope'.
+        Sets memory flag to False for subroutine calls and store instructions
+        """
+
         # subroutine name -> address table
         subroutine_pointers = {}
 
@@ -256,16 +267,11 @@ class Compiler:
             if instruction.value.value in subroutine_pointers:
                 instruction.value.value = subroutine_pointers[instruction.value.value]
                 instruction.flag = False
-
-            # make address pointers
-            elif instruction.value.value in address_pointers:
-                instruction.value.value = address_pointers[instruction.value.value]
-                instruction.flag = False
             # 2 - store or SRA instructions for Quantum CPU's
             if self.code_namespace.definitions[instruction.opcode.value].opcode == 2:
                 instruction.flag = False
 
-    def _compile_forth_stage(self):
+    def _compile_fifth_stage(self):
         """
         Forth internal compilation stage.
 
@@ -287,3 +293,4 @@ class Compiler:
         self._compile_second_stage()
         self._compile_third_stage()
         self._compile_forth_stage()
+        self._compile_fifth_stage()
