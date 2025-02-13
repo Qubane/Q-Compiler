@@ -243,7 +243,7 @@ class Compiler:
 
     def _compile_forth_stage(self):
         """
-        Third internal compilation stage.
+        Forth internal compilation stage.
 
         Inserts subroutines at the end of the 'self.current_scope'.
         Sets memory flag to False for subroutine calls and store instructions
@@ -273,7 +273,7 @@ class Compiler:
 
     def _compile_fifth_stage(self):
         """
-        Forth internal compilation stage.
+        Fifth internal compilation stage.
 
         Converts TaggedInstructions to InstructionN class.
         If 'self.code_namespace' is set to QM lineage of cpu's, then the output is Instruction16
