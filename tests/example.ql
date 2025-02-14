@@ -53,6 +53,30 @@ jumpc 0b00_1000             ; if counter+1 < array_size then loop back (jump to 
                             ; check available flags in QT instruction set google spreadsheet
                             ; https://docs.google.com/spreadsheets/d/1Sl82E1pRsVYuFbP9roWOJOsSJ4JLtFiOXaD3Rq9oaJI
 
+; simple subroutine
+subr simple_subroutine
+    load $counter   ; load counter
+    lsl 1           ; double
+    return
+
+; complex subroutine
+subr complex_subroutine uses x z
+    ; at the beginning of the subroutine the compiler will add 'pop' and 'store' instructions
+
+    load $x     ; load x
+    lsl 6       ; multiply by 64
+    div $z      ; divide by z
+    return
+
+
+; call simple subroutine
+call simple_subroutine
+
+; call complex subroutine
+; before the call the compiler will add 'load' and 'push' instructions
+call complex_subroutine uses 10 40
+
+
 ; halt the CPU
 ; NOTE: if not present, the CPU will continue executing instructions,
 ; even after it overflows the program counter, it will just re-execute the whole program
