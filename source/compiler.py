@@ -53,7 +53,7 @@ class Compiler:
 
     def _generate_macro_scope(self, name: str, args: list[Tag]):
         """
-        Insert a macro at a given index
+        Generates a formatted macro scope
         """
 
         macro = self.macros[name].__copy__()
@@ -64,6 +64,28 @@ class Compiler:
             for old, new in zip(macro[0][3:], args):
                 self._match_and_replace(macro[1], old, new)
         return macro[1]
+
+    def _generate_subr_scope(self, name: str):
+        """
+        Generates a formatted subroutine scope
+        """
+
+        subr = self.subroutines[name].__copy__()
+
+        # subroutine with multiple args
+        if len(subr[0]) > 2:
+            # blindly add pop instructions to scope
+            for arg in subr[0][3:]:
+                # store instruction
+                subr[1].insert(0, Word([
+                    Tag(self.code_namespace.variable_making[0], TagType.BUILT_IN),
+                    arg
+                ]))
+                # pop instruction
+                subr[1].insert(0, Word([
+                    Tag(self.code_namespace.stack_operations["pop"], TagType.BUILT_IN),
+                ]))
+        return subr[1]
 
     def _match_and_replace(self, scope: Scope, old: Tag, new: Tag):
         """
@@ -111,6 +133,7 @@ class Compiler:
                 self.subroutines[word[1].value] = SubroutineScope([
                     self.current_scope.pop(idx),
                     self.current_scope.pop(idx)])
+                self.subroutines[word[1].value][1] = self._generate_subr_scope(word[1].value)
                 idx -= 1
 
             # address pointer
@@ -135,48 +158,50 @@ class Compiler:
             if word[0].value in self.code_namespace.definitions and len(word) == 2:
                 # check if it's a pointer
                 is_pointer = word[1].value[0] == "$"
-                value: str = word[1].value[1:] if is_pointer else word[1].value
+                pointer_name: str = word[1].value[1:] if is_pointer else word[1].value
 
                 # check if it's numeric
                 is_numeric = True
-                if value.isnumeric():  # simple numeric
+                if pointer_name.isnumeric():  # simple numeric
                     pass
-                elif value[:2] in GeneralNamespace.number_prefixes:  # prefixed numeric
+                elif pointer_name[:2] in GeneralNamespace.number_prefixes:  # prefixed numeric
                     # try converting prefixed to just decimal
                     converted = None
                     try:
-                        converted = int(value[2:], GeneralNamespace.number_prefixes[value[:2]])
+                        converted = int(pointer_name[2:], GeneralNamespace.number_prefixes[pointer_name[:2]])
                     except ValueError:
                         pass
 
                     # if number wasn't converted -> error occurred -> reraise it as CompilerError
                     if converted is None:
-                        raise CompilerValueError(f"Unable to convert numeric value '{value}'", line=word.line)
+                        raise CompilerValueError(f"Unable to convert numeric value '{pointer_name}'",
+                                                 line=word.line)
 
                     # that may be a bit confusing to do it here
                     word[1].value = f"{'$' if is_pointer else ''}{converted}"
-                elif value[0].isdigit():  # raise error if first character is a digit
-                    raise CompilerValueError(f"Unable to convert numeric value '{value}'", line=word.line)
+                elif pointer_name[0].isdigit():  # raise error if first character is a digit
+                    raise CompilerValueError(f"Unable to convert numeric value '{pointer_name}'",
+                                             line=word.line)
                 else:  # it's a variable pointer
                     is_numeric = False
 
                 # a non numeric value
                 if not is_numeric:
-                    if word[1].value in self.pointers:  # pointer value was already defined
-                        instruction_value = replace(self.pointers[word[1].value])
-                    elif (word[1].value in self.subroutines or
-                          word[1].value in self.address_pointers):  # define pointer
-                        self.pointers[word[1].value] = Tag(word[1].value, TagType.POINTER)
-                        instruction_value = self.pointers[word[1].value]
-                    elif word[1].value in self.macros:  # I don't know what that would be
+                    if pointer_name in self.pointers:  # pointer value was already defined
+                        instruction_value = replace(self.pointers[pointer_name])
+                    elif (pointer_name in self.subroutines or
+                          pointer_name in self.address_pointers):  # define pointer
+                        self.pointers[pointer_name] = Tag(pointer_name, TagType.POINTER)
+                        instruction_value = self.pointers[pointer_name]
+                    elif pointer_name in self.macros:  # I don't know what that would be
                         raise CompilerNotImplementedError(line=word.line)
                     else:  # define pointer as generic integer
                         if word[0].value not in self.code_namespace.variable_making:
                             raise CompilerNameError(f"Accessing undefined variable '{word[0].value}'",
                                                     line=word.line)
                         self.pointer_counter += 1
-                        self.pointers[word[1].value] = Tag(self.pointer_counter, TagType.POINTER)
-                        instruction_value = self.pointers[word[1].value]
+                        self.pointers[pointer_name] = Tag(self.pointer_counter, TagType.POINTER)
+                        instruction_value = self.pointers[pointer_name]
 
                 # a numeric value
                 else:
@@ -199,6 +224,25 @@ class Compiler:
                 for word in scope[::-1]:  # insert into 'to be processed' scope part
                     self.current_scope.insert(0, word)
                 self._compile_first_stage()
+
+            # subroutines with arguments
+            elif word[0].value == self.code_namespace.subr_operations["call"] and len(word) > 2:
+                # syntax error
+                if word[2].value != "uses":
+                    raise CompilerSyntaxError("Missing keyword 'uses'", line=word.line)
+
+                # append cut call instruction
+                self.current_scope.insert(0, word[:2])
+
+                # generate instructions to push arguments into stack
+                for arg in word[-1:2:-1]:
+                    self.current_scope.insert(0, Word([
+                        Tag(self.code_namespace.stack_operations["push"], TagType.BUILT_IN)
+                    ]))
+                    self.current_scope.insert(0, Word([
+                        Tag(self.code_namespace.variable_loading["load"], TagType.BUILT_IN),
+                        arg
+                    ]))
 
             # address pointers
             elif word[0].type is TagType.POINTER and word[0].value in self.address_pointers:
