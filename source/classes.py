@@ -90,6 +90,9 @@ class Scope:
     def __getitem__(self, item):
         return self.words.__getitem__(item)
 
+    def __setitem__(self, key, value):
+        return self.words.__setitem__(key, value)
+
     def __len__(self):
         return len(self.words)
 
