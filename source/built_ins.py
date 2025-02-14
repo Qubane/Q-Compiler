@@ -31,6 +31,7 @@ class CodeNamespace(DefineNamespace):
 
     instruction_class = InstructionN
     variable_making: list[str]
+    variable_loading: list[str]
     stack_operations: dict[str, str]
     subr_operations: dict[str, str]
 
@@ -115,6 +116,9 @@ class NamespaceQMr11(CodeNamespace):
     variable_making: list[str] = [
         "SRA",
     ]
+    variable_loading: list[str] = [
+        "LRA"
+    ]
     stack_operations: dict[str, str] = {
         "push": "PUSH",
         "pop": "POP",
@@ -170,6 +174,9 @@ class NamespaceQT(CodeNamespace):
     }
     variable_making: list[str] = [
         "store",
+    ]
+    variable_loading: list[str] = [
+        "load"
     ]
     stack_operations: dict[str, str] = {
         "push": "push",
