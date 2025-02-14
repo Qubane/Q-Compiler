@@ -113,7 +113,6 @@ class NamespaceQMr11(CodeNamespace):
     }
     variable_making: list[str] = [
         "SRA",
-        "SRP",
     ]
     stack_operations: dict[str, str] = {
         "push": "PUSH",
@@ -166,7 +165,6 @@ class NamespaceQT(CodeNamespace):
     }
     variable_making: list[str] = [
         "store",
-        "storep",
     ]
     stack_operations: dict[str, str] = {
         "push": "push",
