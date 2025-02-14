@@ -15,6 +15,20 @@ load 0b1001     ; base 2
 load 0xF00F     ; base 16
 
 
+; pointer examples
+load array_size         ; load address of array_size variable
+load $array_size        ; load what is stored in array_size variable
+
+load @basic_loop_start  ; load address of @basic_loop_start address pointer
+
+load simple_subroutine  ; load address of simple_subroutine address pointer
+load complex_subroutine ; load address of complex_subroutine address pointer
+
+load $0         ; load what is stored at address 0
+load $0b1101    ; works with different bases too
+
+
+
 ; simple macro
 macro make_array_ptr uses ptr index
     load ptr    ; load array pointer
