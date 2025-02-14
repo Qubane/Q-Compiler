@@ -163,7 +163,7 @@ class Compiler:
                 # check if it's numeric
                 is_numeric = True
                 if pointer_name.isnumeric():  # simple numeric
-                    pass
+                    word[1].value = pointer_name
                 elif pointer_name[:2] in GeneralNamespace.number_prefixes:  # prefixed numeric
                     # try converting prefixed to just decimal
                     converted = None
@@ -178,7 +178,7 @@ class Compiler:
                                                  line=word.line)
 
                     # that may be a bit confusing to do it here
-                    word[1].value = f"{'$' if is_pointer else ''}{converted}"
+                    word[1].value = str(converted)
                 elif pointer_name[0].isdigit():  # raise error if first character is a digit
                     raise CompilerValueError(f"Unable to convert numeric value '{pointer_name}'",
                                              line=word.line)
