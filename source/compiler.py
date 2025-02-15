@@ -119,7 +119,11 @@ class Compiler:
         Processes all INTERNAL tag types
         """
 
-        for word in self.current_scope:
+        idx = -1
+        while idx < len(self.current_scope)-1:
+            idx += 1
+            word = self.current_scope[idx]
+
             # skip all scopes
             if isinstance(word, Scope):
                 continue
@@ -127,6 +131,10 @@ class Compiler:
             # skip all non internal tag types
             if word[0].type is not TagType.INTERNAL:
                 continue
+
+            # delete preprocessor instruction
+            word = self.current_scope.pop(idx)
+            idx -= 1
 
             instruction = word[0].value[1:]
             if instruction == "define":
