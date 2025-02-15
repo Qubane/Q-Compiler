@@ -143,6 +143,13 @@ class Compiler:
 
                 self._match_and_replace(self.current_scope, word[1], word[2])
 
+            elif instruction == "include":
+                if len(word) != 2:
+                    raise CompilerSyntaxError("Incorrect number of arguments", line=word.line)
+
+                linker = Linker(self.code_namespace)
+                # TODO: proper relative to source code paths
+
     def _compile_first_stage(self):
         """
         First internal compilation stage.
