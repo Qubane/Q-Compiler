@@ -1,3 +1,10 @@
+; testing '#' commands
+#define FOOF 0xF00F
+
+
+load FOOF       ; loads F00F into ACC
+
+
 ; simple case
 load 10     ; load 10 to accumulator
 store $A    ; store accumulator to variable A

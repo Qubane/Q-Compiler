@@ -127,7 +127,12 @@ class Compiler:
             if word[0].type is not TagType.INTERNAL:
                 continue
 
-            print(word)
+            instruction = word[0].value[1:]
+            if instruction == "define":
+                if len(word) != 3:
+                    raise CompilerSyntaxError("Incorrect number of arguments", line=word.line)
+
+                self._match_and_replace(self.current_scope, word[1], word[2])
 
     def _compile_first_stage(self):
         """
