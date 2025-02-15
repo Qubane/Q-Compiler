@@ -149,6 +149,7 @@ class Compiler:
 
                 linker = Linker(self.code_namespace)
                 # TODO: proper relative to source code paths
+                raise CompilerNotImplementedError(line=word.line)
 
     def _compile_first_stage(self):
         """
