@@ -112,7 +112,7 @@ class Compiler:
             value=int(instruction.value.value),  # make sure it's int
             opcode=namespace.definitions[instruction.opcode.value].opcode)
 
-    def _preprocess(self):
+    def _preprocess_stage(self):
         """
         Preprocessor stage.
 
@@ -365,7 +365,7 @@ class Compiler:
         Compiles imported code
         """
 
-        self._preprocess()
+        self._preprocess_stage()
 
         self._compile_first_stage()
         self._compile_second_stage()
