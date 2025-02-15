@@ -363,3 +363,6 @@ class Compiler:
         self._compile_third_stage()
         self._compile_forth_stage()
         self._compile_fifth_stage()
+
+        if len(self.instructions) > 0xFFFF:
+            raise CompilerError("Address overflow. Too many instruction!")
