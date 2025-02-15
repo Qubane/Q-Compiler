@@ -6,6 +6,7 @@ Compiling code
 import logging
 from source.classes import *
 from source.built_ins import *
+from source.linker import Linker
 
 
 LOGGER = logging.getLogger("compiler")
