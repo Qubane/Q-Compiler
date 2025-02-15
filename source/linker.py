@@ -23,3 +23,17 @@ class Linker:
         """
         Imports code into linker
         """
+
+        # Lexing stage
+        lexer = Lexer()
+        lexer.code_namespace = self.code_namespace
+        lexer.import_code(code)
+        lexer.evaluate()
+
+        # Parsing stage
+        parser = Parser()
+        parser.import_scope(lexer.current_scope)
+        parser.parse()
+
+        # get current scope from parser stage
+        self.current_scope = parser.current_scope
