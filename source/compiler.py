@@ -111,6 +111,24 @@ class Compiler:
             value=int(instruction.value.value),  # make sure it's int
             opcode=namespace.definitions[instruction.opcode.value].opcode)
 
+    def _preprocess(self):
+        """
+        Preprocessor stage.
+
+        Processes all INTERNAL tag types
+        """
+
+        for word in self.current_scope:
+            # skip all scopes
+            if isinstance(word, Scope):
+                continue
+
+            # skip all non internal tag types
+            if word[0].type is not TagType.INTERNAL:
+                continue
+
+            print(word)
+
     def _compile_first_stage(self):
         """
         First internal compilation stage.
@@ -332,6 +350,8 @@ class Compiler:
         """
         Compiles imported code
         """
+
+        self._preprocess()
 
         self._compile_first_stage()
         self._compile_second_stage()

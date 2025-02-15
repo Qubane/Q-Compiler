@@ -85,6 +85,8 @@ class Lexer:
                     tag.type = GeneralNamespace.definitions[tag.value].type
                 elif tag.value in self.code_namespace.definitions:
                     tag.type = self.code_namespace.definitions[tag.value].type
+                elif tag.value[0] == "#":
+                    tag.type = TagType.INTERNAL
                 else:
                     tag.type = TagType.POINTER
 
