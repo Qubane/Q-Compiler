@@ -2,6 +2,20 @@
 ; In real CPU you can write screen drivers yourself for your own implementation
 
 
+; update subroutine
+subr update_call
+    ; pick ScreenModule
+    load 1
+    portw 0         ; module index
+
+    ; pick starting index (at 32768 or 0x8000)
+    load 0x8000
+    portw 1         ; starting cache index
+
+    ; syscall
+    int 0x80
+
+
 ; initialize the screen
 ; [MODULE INDEX] - port 0
 load 1      ; load 1 into ACC
@@ -18,9 +32,19 @@ portw 1     ; write to port 1
 load 16     ; load 16
 portw 2     ; write to port 2
 
-; interrupt call
+; syscall
 int 0x80
 
 
-halt
+; main update loop
+@main_loop
 
+; update screen
+call update_call
+
+; loop back
+jump @main_loop
+
+
+@exit
+halt
