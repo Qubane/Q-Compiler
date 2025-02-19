@@ -4,6 +4,7 @@
 
 #define WIN_WIDTH 32
 #define WIN_HEIGHT 32
+#define ARR_START 0x8000
 
 
 macro make_array_ptr uses ptr index
@@ -28,7 +29,7 @@ subr update_call
     portw 0         ; module index
 
     ; pick starting index (at 32768 or 0x8000)
-    load 0x8000
+    load ARR_START
     portw 1         ; starting cache index
 
     ; syscall
@@ -42,10 +43,18 @@ subr render_call
     store $x
     store $y
 
-    @render_y_loop
-    @render_x_loop
+    @render_loop
 
-    ; do per pixel stuff here
+    ; per pixel stuff here
+
+    ; calculate pixel index in array
+    load $y
+    mul WIN_WIDTH
+    add $x
+    store $index
+
+    write_array uses ARR_START $index $index
+
 
     ; increment x
     load $x
@@ -53,8 +62,12 @@ subr render_call
     store $x
 
     comp WIN_WIDTH          ; compare with window width
-    loadpr @render_x_loop   ; load pointer
+    loadpr @render_loop     ; load pointer
     jumpc 0b00_1000         ; if x < width -> loop back
+
+    ; reset x
+    load 0
+    store $x
 
     ; increment y
     load $y
@@ -62,7 +75,7 @@ subr render_call
     store $y
 
     comp WIN_HEIGHT         ; compare with window height
-    loadpr @render_y_loop   ; load pointer
+    loadpr @render_loop     ; load pointer
     jumpc 0b00_1000         ; if y < height -> loop back
 
     return
