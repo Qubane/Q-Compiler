@@ -342,7 +342,9 @@ class Compiler:
             subroutine_pointers[subroutine_name] = len(self.instructions)
             for word in scope[1]:
                 self.current_scope.add(word)
+            self._compile_first_stage()
             self._compile_second_stage()
+            self._compile_third_stage()
 
         # go through TaggedInstructions and replace references to 'subroutine_scope' with addresses
         # from 'locations' table
