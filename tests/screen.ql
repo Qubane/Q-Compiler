@@ -20,6 +20,39 @@ subr update_call
     int 0x80
 
 
+; render frame
+subr render_call
+    ; reset X and Y counters
+    load 0
+    store $x
+    store $y
+
+    @render_y_loop
+    @render_x_loop
+
+    ; do per pixel stuff here
+
+    ; increment x
+    load $x
+    inc
+    store $x
+
+    comp WIN_WIDTH          ; compare with window width
+    loadpr @render_x_loop   ; load pointer
+    jumpc 0b00_1000         ; if x < width -> loop back
+
+    ; increment y
+    load $y
+    inc
+    store $y
+
+    comp WIN_HEIGTH         ; compare with window height
+    loadpr @render_y_loop   ; load pointer
+    jumpc 0b00_1000         ; if y < height -> loop back
+
+    return
+
+
 ; initialize the screen
 ; [MODULE INDEX] - port 0
 load 1      ; load 1 into ACC
