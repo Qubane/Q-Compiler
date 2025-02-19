@@ -6,6 +6,21 @@
 #define WIN_HEIGHT 32
 
 
+macro make_array_ptr uses ptr index
+    load ptr    ; load array pointer
+    add index   ; add index
+
+macro write_array uses ptr index value
+    make_array_ptr uses ptr index  ; make pointer (output in ACC)
+    tapr        ; transfer ACC to pointer register (PR)
+    load value  ; load value into ACC
+    storep      ; store value at address defined by PR
+
+macro read_array uses ptr index
+    make_array_ptr uses ptr index  ; make pointer (output in ACC)
+    loadp
+
+
 ; update subroutine
 subr update_call
     ; pick ScreenModule
