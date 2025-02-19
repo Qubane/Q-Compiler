@@ -46,7 +46,7 @@ subr render_call
     inc
     store $y
 
-    comp WIN_HEIGTH         ; compare with window height
+    comp WIN_HEIGHT         ; compare with window height
     loadpr @render_y_loop   ; load pointer
     jumpc 0b00_1000         ; if y < height -> loop back
 
@@ -74,6 +74,9 @@ int 0x80
 
 ; main update loop
 @main_loop
+
+; render frame
+call render_call
 
 ; update screen
 call update_call
