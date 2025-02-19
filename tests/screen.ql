@@ -2,6 +2,10 @@
 ; In real CPU you can write screen drivers yourself for your own implementation
 
 
+#define WIN_WIDTH 32
+#define WIN_HEIGHT 32
+
+
 ; update subroutine
 subr update_call
     ; pick ScreenModule
@@ -22,11 +26,10 @@ load 1      ; load 1 into ACC
 portw 0     ; write 1 to port 0 (ScreenModule)
 
 ; [WIDTH | HEIGHT] - port 1
-load 32     ; load 32
-store $0    ; store to 0
-lsl 8       ; left shift by 8
-or $0       ; bitwise OR with 0 addr
-portw 1     ; write to port 1
+load WIN_WIDTH  ; load window width
+lsl 8           ; shift 8 bits
+or WIN_HEIGHT   ; bitwise OR with window height
+portw 1         ; write to port 1
 
 ; [MODE] - port 2
 load 16     ; load 16
