@@ -346,10 +346,10 @@ class Compiler:
             self._compile_first_stage()
             self._compile_second_stage()
             self._compile_third_stage()
-            post_compilation_pointer = set(self.pointers)
+            post_compilation_pointers = set(self.pointers)
 
             # delete created by subroutine variables, and reset pointer counter by same amount
-            pointer_diff = post_compilation_pointer - pre_compilation_pointers
+            pointer_diff = post_compilation_pointers - pre_compilation_pointers
             self.pointer_counter -= len(pointer_diff)
             for pointer in pointer_diff:
                 self.pointers.pop(pointer)
