@@ -382,6 +382,13 @@ class Compiler:
             self.bytecode.append(
                 self._convert_tagged2byte(instruction, self.code_namespace))
 
+    def _trivial_optimization(self):
+        """
+        Trivial optimization stage.
+
+        Removes unnecessary 'load' / stack instructions
+        """
+
     def compile(self):
         """
         Compiles imported code
