@@ -34,6 +34,7 @@ class CodeNamespace(DefineNamespace):
     variable_loading: dict[str, str]
     stack_operations: dict[str, str]
     subr_operations: dict[str, str]
+    non_modifying_operations: set[str]
 
 
 class NamespaceGeneral(DefineNamespace):
@@ -127,6 +128,9 @@ class NamespaceQMr11(CodeNamespace):
         "call": "CALL",
         "return": "RET"
     }
+    non_modifying_operations: set[str] = {
+        # TODO: add non_modifying_operations for QM
+    }
 
 
 class NamespaceQT(CodeNamespace):
@@ -185,4 +189,16 @@ class NamespaceQT(CodeNamespace):
     subr_operations: dict[str, str] = {
         "call": "call",
         "return": "return"
+    }
+    non_modifying_operations: set[str] = {
+        "nop",
+        "store",
+        "loadpr",
+        "storep",
+        "tapr",
+        "push",
+        "clf",
+        "portw",
+        "int",
+        "halt"
     }
