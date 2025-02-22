@@ -389,6 +389,29 @@ class Compiler:
         Removes unnecessary 'load' / stack instructions
         """
 
+        accumulator = Tag("ACC", TagType.UNDEFINED)
+        modified = False
+
+        idx = 0
+        while idx < len(self.instructions):
+            instruction = self.instructions[idx]
+            idx += 1
+
+            # if instruction is variable loading
+            if instruction.opcode.value in self.code_namespace.variable_loading.values():
+                # if there are no modifying instructions before previous load
+                # remove this instruction
+                if accumulator == instruction.value and not modified:
+                    idx -= 1
+                    self.instructions.pop(idx)
+
+                # update values
+                accumulator = instruction.value
+                modified = False
+
+            elif instruction.opcode.value not in self.code_namespace.non_modifying_operations:
+                modified = True
+
     def compile(self):
         """
         Compiles imported code
@@ -400,9 +423,9 @@ class Compiler:
         self._compile_second_stage()
         self._compile_third_stage()
         self._compile_forth_stage()
-        self._compile_fifth_stage()
 
         self._trivial_optimization()
+        self._compile_fifth_stage()
 
         if len(self.instructions) > 0xFFFF:
             raise CompilerError("Address overflow. Too many instruction!")
