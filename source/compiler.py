@@ -272,17 +272,17 @@ class Compiler:
                     raise CompilerSyntaxError("Missing keyword 'uses'", line=word.line)
 
                 # append cut call instruction
-                self.current_scope.insert(0, word[:2])
+                self.current_scope.insert(0, Word(word[:2], line=word.line))
 
                 # generate instructions to push arguments into stack
                 for arg in word[-1:2:-1]:
                     self.current_scope.insert(0, Word([
                         Tag(self.code_namespace.stack_operations["push"], TagType.BUILT_IN)
-                    ]))
+                    ], line=word.line))
                     self.current_scope.insert(0, Word([
                         Tag(self.code_namespace.variable_loading["load"], TagType.BUILT_IN),
                         arg
-                    ]))
+                    ], line=word.line))
 
             # address pointers
             elif word[0].type is TagType.POINTER and word[0].value in self.address_pointers:
