@@ -28,8 +28,8 @@ load $array_size        ; load what is stored in array_size variable
 
 load @basic_loop_start  ; load address of @basic_loop_start address pointer
 
-load simple_subroutine  ; load address of simple_subroutine address pointer
-load complex_subroutine ; load address of complex_subroutine address pointer
+load simple_subroutine      ; load address of simple_subroutine address pointer
+load complex_subroutine_0   ; load address of complex_subroutine address pointer
 
 load $0         ; load what is stored at address 0
 load $0b1101    ; works with different bases too
@@ -81,12 +81,17 @@ subr simple_subroutine
     return
 
 ; complex subroutine
-subr complex_subroutine uses x z
+subr complex_subroutine_0 uses x z
     ; at the beginning of the subroutine the compiler will add 'pop' and 'store' instructions
 
     load $x     ; load x
     lsl 6       ; multiply by 64
     div $z      ; divide by z
+    return
+
+; complex subroutine
+subr complex_subroutine_1 uses y z
+    call complex_subroutine_0 uses y z
     return
 
 
@@ -95,7 +100,7 @@ call simple_subroutine
 
 ; call complex subroutine
 ; before the call the compiler will add 'load' and 'push' instructions
-call complex_subroutine uses 10 40
+call complex_subroutine_0 uses 10 40
 
 
 ; halt the CPU
