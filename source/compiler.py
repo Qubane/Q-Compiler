@@ -336,15 +336,23 @@ class Compiler:
         # subroutine name -> address table
         subroutine_pointers = {}
 
-        # insert subroutines at the end of the instruction list
+        # append subroutines at the end of the instruction list
         for subroutine_name, subroutine_scope in self.subroutines.items():
             scope = subroutine_scope.__copy__()
             subroutine_pointers[subroutine_name] = len(self.instructions)
             for word in scope[1]:
                 self.current_scope.add(word)
+            pre_compilation_pointers = set(self.pointers)
             self._compile_first_stage()
             self._compile_second_stage()
             self._compile_third_stage()
+            post_compilation_pointer = set(self.pointers)
+
+            # delete created by subroutine variables, and reset pointer counter by same amount
+            pointer_diff = post_compilation_pointer - pre_compilation_pointers
+            self.pointer_counter -= len(pointer_diff)
+            for pointer in pointer_diff:
+                self.pointers.pop(pointer)
 
         # go through TaggedInstructions and replace references to 'subroutine_scope' with addresses
         # from 'locations' table
