@@ -260,6 +260,10 @@ class Compiler:
 
             # macros
             elif word[0].type is TagType.POINTER and word[0].value in self.macros:
+                # check for syntax error
+                if word[1].value != "uses":
+                    raise CompilerSyntaxError("Missing keyword 'uses'", line=word.line)
+
                 scope = self._generate_macro_scope(word[0].value, word[2:])  # generate formatted macro scope
                 for word in scope[::-1]:  # insert into 'to be processed' scope part
                     self.current_scope.insert(0, word)
@@ -267,7 +271,7 @@ class Compiler:
 
             # subroutines with arguments
             elif word[0].value == self.code_namespace.subr_operations["call"] and len(word) > 2:
-                # syntax error
+                # check for syntax error
                 if word[2].value != "uses":
                     raise CompilerSyntaxError("Missing keyword 'uses'", line=word.line)
 
