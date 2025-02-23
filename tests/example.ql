@@ -1,8 +1,10 @@
 ; testing '#' commands
-#define FOOF 0xF00F
+#define FOOF 0xF00F                 ; generic define
+#define FOOF_SQUARED FOOF * FOOF    ; some preprocessing math
 
 
-load FOOF       ; loads F00F into ACC
+load FOOF           ; loads F00F into ACC
+load FOOF_SQUARED   ; loads squared F00F into ACC
 
 
 ; simple case
