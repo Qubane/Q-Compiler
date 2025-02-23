@@ -29,6 +29,7 @@ class CodeNamespace(DefineNamespace):
     Namespace for code definitions
     """
 
+    max_int: int
     instruction_class = InstructionN
     variable_making: list[str]
     variable_loading: dict[str, str]
@@ -62,6 +63,7 @@ class NamespaceQMr11(CodeNamespace):
     Quantum Mini rev. 1.1 built-ins
     """
 
+    max_int: int = 2 ** 8 - 1
     instruction_class = Instruction16
     definitions: dict[str, Definition] = {
         "NOP": Definition(TagType.BUILT_IN, 0),
@@ -138,6 +140,7 @@ class NamespaceQT(CodeNamespace):
     Quantum Tera (cutie :3) built-ins
     """
 
+    max_int: int = 2 ** 16 - 1
     instruction_class = Instruction24
     definitions: dict[str, Definition] = {
         "nop": Definition(TagType.BUILT_IN, 0),
