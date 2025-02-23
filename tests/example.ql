@@ -37,7 +37,6 @@ load $0         ; load what is stored at address 0
 load $0b1101    ; works with different bases too
 
 
-
 ; simple macro
 macro make_array_ptr uses ptr index
     load ptr    ; load array pointer
