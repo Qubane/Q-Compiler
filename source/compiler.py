@@ -138,10 +138,26 @@ class Compiler:
 
             instruction = word[0].value[1:]
             if instruction == "define":
-                if len(word) != 3:
-                    raise CompilerSyntaxError("Incorrect number of arguments", line=word.line)
+                old_tag = word[1]
 
-                self._match_and_replace(self.current_scope, word[1], word[2])
+                # generic defines
+                if len(word) == 3:
+                    new_tag = word[2]
+
+                # defines with more than 2 arguments
+                else:
+                    # try to evaluate the expression
+                    expression = " ".join(x.value for x in word[2:])
+                    expression = expression.replace("__", "")  # there is no good reason to use '__'
+                    try:
+                        evaluated = int(eval(expression)) % (self.code_namespace.max_int + 1)
+                    except Exception as err:
+                        raise CompilerSyntaxError(f"Unable to process '{expression}'", line=word.line)
+
+                    # generate new tag according to newly calculated value
+                    new_tag = Tag(str(evaluated), TagType.POINTER)
+
+                self._match_and_replace(self.current_scope, old_tag, new_tag)
 
             elif instruction == "include":
                 if len(word) != 2:
