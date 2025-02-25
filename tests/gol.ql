@@ -3,7 +3,7 @@
 #define GRID_SIZE 32
 #define ARR_PTR 0x8000
 #define ARR_SIZE ( GRID_SIZE * GRID_SIZE ) // 16
-#define RNG_SEED 0x1234
+#define RNG_SEED 0x1543
 
 
 load RNG_SEED
@@ -54,6 +54,52 @@ subr fill_board
 
     ; return if counter exceeds array size
     return
+
+
+subr init_screen_module uses WIN_WIDTH WIN_HEIGHT
+    ; [MODULE INDEX] - port 0
+    load 1      ; load 1 into ACC
+    portw 0     ; write 1 to port 0 (ScreenModule)
+
+    ; [WIDTH | HEIGHT] - port 1
+    load $WIN_WIDTH     ; load window width
+    lsl 8               ; shift 8 bits
+    or $WIN_HEIGHT      ; bitwise OR with window height
+    portw 1             ; write to port 1
+
+    ; [MODE] - port 2
+    load 1      ; load 1 (BW mode)
+    portw 2     ; write to port 2
+
+    ; syscall
+    int 0x80
+    return
+
+subr update_screen
+    ; pick ScreenModule
+    load 1
+    portw 0         ; module index
+
+    ; pick starting index (at 32768 or 0x8000)
+    load ARR_PTR
+    portw 1         ; starting cache index
+
+    ; syscall
+    int 0x80
+    return
+
+
+; initialize screen module
+; [WIN_WIDTH, WIN_HEIGHT]
+call init_screen_module uses GRID_SIZE GRID_SIZE
+
+; fill the board
+call fill_board
+
+; main update loop
+@main_loop
+call update_screen
+jump @main_loop
 
 
 halt
