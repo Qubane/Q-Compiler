@@ -363,14 +363,16 @@ class Compiler:
             for word in scope[1]:
                 self.current_scope.add(word)
             pre_compilation_pointers = set(self.pointers)
+            pre_compilation_counter = self.pointer_counter
             self._compile_first_stage()
             self._compile_second_stage()
             self._compile_third_stage()
             post_compilation_pointers = set(self.pointers)
+            post_compilation_counter = self.pointer_counter
 
             # delete created by subroutine variables, and reset pointer counter by same amount
             pointer_diff = post_compilation_pointers - pre_compilation_pointers
-            self.pointer_counter -= len(pointer_diff)
+            self.pointer_counter -= post_compilation_counter - pre_compilation_counter
             for pointer in pointer_diff:
                 self.pointers.pop(pointer)
 
