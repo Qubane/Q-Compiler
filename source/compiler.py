@@ -358,7 +358,6 @@ class Compiler:
 
         # append subroutines at the end of the instruction list
         for subroutine_name, subroutine_scope in self.subroutines.items():
-            self._trivial_optimization()  # TODO: don't optimize the entire program every new subroutine
             scope = subroutine_scope.__copy__()
             subroutine_pointers[subroutine_name] = len(self.instructions)
             for word in scope[1]:
@@ -443,7 +442,7 @@ class Compiler:
         self._compile_third_stage()
         self._compile_forth_stage()
 
-        self._trivial_optimization()
+        # self._trivial_optimization()
         self._compile_fifth_stage()
 
         if len(self.instructions) > 0xFFFF:
