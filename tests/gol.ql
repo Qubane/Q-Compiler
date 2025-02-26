@@ -1,6 +1,7 @@
 ; Attempt at Game Of Life
 
-#define GRID_SIZE 32
+#define GRID_SIZE 64
+#define GRID_WIDTH GRID_SIZE // 16
 #define ARR_PTR 0x8000
 #define ARR_SIZE ( GRID_SIZE * GRID_SIZE ) // 16
 #define RNG_SEED 0x1543
@@ -41,6 +42,34 @@ subr fill_board
 
     write_array uses ARR_PTR $counter $rand     ; write random to array
     call random                                 ; update random number
+
+    ; increment counter
+    load $counter
+    inc
+    store $counter
+
+    ; compare against array size
+    comp ARR_SIZE
+    loadpr @loop_start
+    jumpc 0b00_1000
+
+    ; return if counter exceeds array size
+    return
+
+subr process_board
+    ; define counter
+    load 0
+    store $counter
+
+    @loop_start
+    ; convert count to X Y cell position
+    load $counter
+    mod GRID_WIDTH
+    store $X
+
+    load $counter
+    div GRID_WIDTH
+    store $Y
 
     ; increment counter
     load $counter
@@ -99,6 +128,7 @@ call fill_board
 ; main update loop
 @main_loop
 call update_screen
+call process_board
 jump @main_loop
 
 
