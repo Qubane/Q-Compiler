@@ -7,6 +7,9 @@
 
 #define ARRAY_POINTER 0x8000
 
+#define ACC_BIT 8
+#define ACCURACY 1 << ACC_BIT
+
 
 macro plot uses pos_x pos_y value
     load pos_y          ; load position y
@@ -37,6 +40,77 @@ macro init_screen uses width height mode
     int 0x80
 
 
+macro iterate_point uses pos_x pos_y
+    load ACCURACY
+    div pos_x
+    store $u
+    store $za
+
+    load ACCURACY
+    div pos_y
+    store $v
+    store $zb
+
+    store $temp_a
+    store $temp_b
+
+    load 0
+    store $iteration
+
+    @loop
+
+    ; square U
+    load $za
+    mul $za
+    lsr ACC_BIT
+    store $temp_a
+
+    ; square V
+    load $zb
+    mul $zb
+    lsr ACC_BIT
+    store $temp_b
+
+    add $temp_a
+
+    ; if za*za + zb*zb < 4 -> continue, else -> exit loop
+    comp 4
+    loadpr @continue_loop
+    jumpc 0b00_1000
+    jump @exit_loop
+
+    @continue_loop
+    ; calculate za to temp_a
+    load $temp_a
+    sub $temp_b
+    add $u
+    store $temp_a
+
+    ; calculate zb
+    load $za
+    mul $zb
+    lsr ACC_BIT
+    lsl 1
+    add $v
+    store $zb
+
+    ; move temp_a to za
+    load $temp_a
+    store $za
+
+    ; increment iteration
+    load $iteration
+    inc
+    store $iteration
+
+    comp ITERATIONS         ; compare with ITERATIONS
+    loadpr @loop            ; load pointer
+    jumpc 0b00_1000         ; if iteration < ITERATIONS -> loop back
+
+    @exit_loop
+    load $iteration
+
+
 subr update_call
     ; pick ScreenModule
     load 1
@@ -59,6 +133,18 @@ subr render_call
     @render_loop
 
     ; do mandelbrot stuff here
+    iterate_point uses $x $y
+    store $iter
+
+    load $x
+    sub 16
+    store $ox
+
+    load $y
+    sub 16
+    store $oy
+
+    plot uses $ox $oy $iter
 
     ; calculate pixel index in array
     load $y
