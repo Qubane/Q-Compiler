@@ -16,3 +16,16 @@ macro plot uses pos_x pos_y value
     tapr                ; transfer pointer to PR
     load value          ; load value
     storep              ; store value at address PR
+
+
+subr update_call
+    ; pick ScreenModule
+    load 1
+    portw 0         ; module index
+
+    ; pick starting index (at 32768 or 0x8000)
+    load ARR_START
+    portw 1         ; starting cache index
+
+    ; syscall
+    int 0x80
