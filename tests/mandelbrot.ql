@@ -18,6 +18,25 @@ macro plot uses pos_x pos_y value
     storep              ; store value at address PR
 
 
+macro init_screen uses width height mode
+    ; [MODULE INDEX] - port 0
+    load 1      ; load 1 into ACC
+    portw 0     ; write 1 to port 0 (ScreenModule)
+
+    ; [WIDTH | HEIGHT] - port 1
+    load width  ; load window width
+    lsl 8       ; shift 8 bits
+    or height   ; bitwise OR with window height
+    portw 1     ; write to port 1
+
+    ; [MODE] - port 2
+    load mode   ; load 16
+    portw 2     ; write to port 2
+
+    ; syscall
+    int 0x80
+
+
 subr update_call
     ; pick ScreenModule
     load 1
