@@ -2,7 +2,7 @@
 
 #define WIN_WIDTH   32
 #define WIN_HEIGHT  32
-#define WIN_MODE    16
+#define WIN_MODE   16       ; TODO: fix buggy \t detection in lexer
 #define ITERATIONS  16
 
 #define ARRAY_POINTER 0x8000
@@ -43,7 +43,7 @@ subr update_call
     portw 0         ; module index
 
     ; pick starting index (at 32768 or 0x8000)
-    load ARR_START
+    load ARRAY_POINTER
     portw 1         ; starting cache index
 
     ; syscall
@@ -92,3 +92,24 @@ subr render_call
     jumpc 0b00_1000         ; if y < height -> loop back
 
     return
+
+
+; initialize screen module
+init_screen uses WIN_WIDTH WIN_HEIGHT WIN_MODE
+
+
+; main update loop
+@main_loop
+
+; render frame
+call render_call
+
+; update screen
+call update_call
+
+; loop back
+jump @main_loop
+
+
+@exit
+halt
