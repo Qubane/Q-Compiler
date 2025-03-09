@@ -29,3 +29,47 @@ subr update_call
 
     ; syscall
     int 0x80
+
+
+subr render_call
+    ; reset X and Y counters
+    load 0
+    store $x
+    store $y
+
+    @render_loop
+
+    ; do mandelbrot stuff here
+
+    ; calculate pixel index in array
+    load $y
+    mul WIN_WIDTH
+    add $x
+    store $index
+
+    write_array uses ARR_START $index $index
+
+
+    ; increment x
+    load $x
+    inc
+    store $x
+
+    comp WIN_WIDTH          ; compare with window width
+    loadpr @render_loop     ; load pointer
+    jumpc 0b00_1000         ; if x < width -> loop back
+
+    ; reset x
+    load 0
+    store $x
+
+    ; increment y
+    load $y
+    inc
+    store $y
+
+    comp WIN_HEIGHT         ; compare with window height
+    loadpr @render_loop     ; load pointer
+    jumpc 0b00_1000         ; if y < height -> loop back
+
+    return
